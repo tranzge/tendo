@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TENDO · Control Financiero</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --bg-color: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+        }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+        }
+        h1 {
+            text-align: center;
+            color: var(--text-main);
+            margin-top: 0;
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1.1fr 1fr;
+            gap: 40px;
+        }
+        @media (max-width: 768px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border);
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .input-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        .input-group label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #334155;
+            margin: 0;
+        }
+        .input-group input[type="number"] {
+            width: 100px;
+            padding: 8px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 1rem;
+            text-align: right;
+            transition: border-color 0.2s;
+        }
+        .input-group input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        /* Select Modes */
+        .select-mode {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 10px;
+            border: 2px solid var(--primary);
+            background: #eff6ff;
+            color: var(--primary);
+            cursor: pointer;
+            margin-bottom: 20px;
+            appearance: none;
+        }
+
+        /* Item Row CSS */
+        .item-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+        }
+        .item-row.highlight { border-color: #bfdbfe; background: #eff6ff; }
+        .item-name { font-size: 0.9rem; font-weight: 600; flex: 1; }
+        .item-cost { 
+            width: 70px; 
+            padding: 6px; 
+            border: 1px solid #cbd5e1; 
+            border-radius: 6px; 
+            text-align: right; 
+            margin-right: 15px; 
+            font-size: 0.9rem;
+        }
+        .item-cost:focus { outline: none; border-color: var(--primary); }
+
+        /* Toggle Switch CSS */
+        .toggle-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+        }
+        .toggle-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            flex: 1;
+        }
+        
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #cbd5e1;
+            transition: .3s;
+            border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+        input:checked + .slider { background-color: var(--primary); }
+        .toggle-wrapper.green input:checked + .slider { background-color: #10b981; }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        /* Results Cards */
+        .result-card {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+        }
+        .result-card-header {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 12px;
+        }
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+        
+        /* Hero Price */
+        .hero-price-box {
+            background: #0f172a;
+            color: white;
+            border-radius: 12px;
+            padding: 25px 20px;
+            text-align: center;
+            margin-bottom: 15px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+        .hero-price-label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #94a3b8;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        .hero-price-amount {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: #10b981;
+            margin: 5px 0;
+        }
+        .hero-anticipo {
+            background: rgba(255,255,255,0.1);
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+    
+/* =========================
+   TENDO · ADMIN SYSTEM
+   ========================= */
+:root{
+    --primary:#00A98F;
+    --primary-dark:#087766;
+    --ink:#0B1015;
+    --text-main:#0B1015;
+    --text-muted:#667078;
+    --bg-color:#F5F6F5;
+    --card-bg:#FFFFFF;
+    --surface:#F0F2F1;
+    --border:#D9DDDB;
+    --border-soft:#E9EBEA;
+    --teal-soft:rgba(0,169,143,.08);
+    --teal-border:rgba(0,169,143,.24);
+    --danger:#C23B3B;
+}
+
+*{box-sizing:border-box;}
+
+html{
+    -webkit-font-smoothing:antialiased;
+}
+
+body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:
+        radial-gradient(circle at 50% -10%, rgba(0,169,143,.055), transparent 34%),
+        var(--bg-color);
+    color:var(--text-main);
+    margin:0;
+    padding:18px;
+}
+
+.container{
+    max-width:1080px;
+    margin:0 auto;
+    background:var(--card-bg);
+    padding:26px;
+    border-radius:18px;
+    border:1px solid var(--border);
+    box-shadow:0 12px 35px rgba(11,16,21,.055);
+}
+
+h1{
+    text-align:left;
+    color:var(--ink);
+    margin:0 0 5px;
+    font-size:1.55rem;
+    font-weight:850;
+    letter-spacing:.13em;
+    text-transform:uppercase;
+}
+
+h1::after{
+    content:"";
+    display:inline-block;
+    width:8px;
+    height:8px;
+    margin-left:4px;
+    border-radius:50%;
+    background:var(--primary);
+    vertical-align:middle;
+}
+
+.container > p{
+    color:var(--text-muted)!important;
+    font-size:.78rem!important;
+    margin:0 0 22px!important;
+    font-weight:600;
+    letter-spacing:.025em;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:minmax(0,1.05fr) minmax(340px,.95fr);
+    gap:28px;
+}
+
+.section-title{
+    font-size:.78rem;
+    font-weight:800;
+    margin:20px 0 10px;
+    padding:0 0 8px;
+    border-bottom:1px solid var(--border);
+    color:var(--ink);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    text-transform:uppercase;
+    letter-spacing:.09em;
+}
+
+.grid > div:first-child > .section-title:first-of-type{
+    margin-top:8px;
+}
+
+.input-group{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:14px;
+    margin-bottom:8px;
+    padding:10px 12px;
+    background:var(--surface);
+    border-radius:10px;
+    border:1px solid var(--border-soft);
+}
+
+.input-group label{
+    font-size:.8rem;
+    font-weight:650;
+    color:#394249;
+    margin:0;
+}
+
+.input-group input[type="number"]{
+    width:92px;
+    padding:8px 9px;
+    border:1px solid #CBD2CF;
+    border-radius:8px;
+    font-size:.9rem;
+    text-align:right;
+    background:#fff;
+    color:var(--ink);
+    transition:border-color .18s,box-shadow .18s;
+}
+
+.input-group input[type="number"]:focus,
+.item-cost:focus{
+    outline:none;
+    border-color:var(--primary);
+    box-shadow:0 0 0 3px rgba(0,169,143,.10);
+}
+
+.select-mode{
+    width:100%;
+    padding:12px 14px;
+    font-size:.88rem;
+    font-weight:750;
+    border-radius:10px;
+    border:1px solid var(--border);
+    background:#fff!important;
+    color:var(--ink)!important;
+    cursor:pointer;
+    margin-bottom:8px;
+    appearance:auto;
+}
+
+#modoVenta{
+    background:var(--ink)!important;
+    color:#fff!important;
+    border-color:var(--ink);
+}
+
+.item-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:9px 11px;
+    border-radius:10px;
+    margin-bottom:7px;
+    border:1px solid var(--border-soft);
+    background:var(--surface);
+}
+
+.item-row.highlight{
+    border-color:var(--teal-border);
+    background:var(--teal-soft);
+}
+
+.item-name{
+    font-size:.82rem;
+    font-weight:650;
+    flex:1;
+    color:#252D33;
+}
+
+.item-cost{
+    width:72px;
+    padding:7px 7px;
+    border:1px solid #CBD2CF;
+    border-radius:7px;
+    text-align:right;
+    margin-right:9px;
+    font-size:.82rem;
+    background:#fff;
+    color:var(--ink);
+}
+
+.toggle-wrapper{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:11px 12px;
+    border-radius:10px;
+    margin-bottom:7px;
+    border:1px solid var(--border-soft)!important;
+    background:var(--surface)!important;
+}
+
+.toggle-wrapper.green{
+    background:var(--teal-soft)!important;
+    border-color:var(--teal-border)!important;
+}
+
+.toggle-wrapper[style*="blue"]{
+    background:#F0F2F1!important;
+    border-color:var(--border)!important;
+}
+
+.toggle-wrapper[style*="blue"] .toggle-label{
+    color:var(--ink)!important;
+}
+
+.toggle-label{
+    font-size:.8rem;
+    font-weight:700;
+    flex:1;
+    color:#30393F;
+}
+
+.switch{
+    width:44px;
+    height:24px;
+}
+
+.slider{
+    background:#CDD3D0;
+}
+
+input:checked + .slider,
+.toggle-wrapper.green input:checked + .slider{
+    background:var(--primary);
+}
+
+.result-card{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:13px;
+    padding:14px 16px;
+    margin-bottom:11px;
+    box-shadow:0 2px 10px rgba(11,16,21,.025);
+}
+
+.result-card-header{
+    font-size:.68rem;
+    font-weight:800;
+    color:var(--text-muted);
+    text-transform:uppercase;
+    letter-spacing:.09em;
+    margin-bottom:11px;
+}
+
+.result-row{
+    display:flex;
+    justify-content:space-between;
+    gap:14px;
+    margin-bottom:7px;
+    font-size:.83rem;
+}
+
+.hero-price-box{
+    background:var(--ink);
+    color:white;
+    border-radius:15px;
+    padding:22px 18px;
+    text-align:center;
+    margin-bottom:11px;
+    box-shadow:0 12px 25px rgba(11,16,21,.14);
+    position:relative;
+    overflow:hidden;
+}
+
+.hero-price-box::after{
+    content:"";
+    position:absolute;
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    right:-55px;
+    top:-55px;
+    background:rgba(0,169,143,.14);
+}
+
+.hero-price-label{
+    font-size:.68rem;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    color:#AEB6BB;
+    margin-bottom:4px;
+    font-weight:700;
+    position:relative;
+    z-index:1;
+}
+
+.hero-price-amount{
+    font-size:2.65rem;
+    font-weight:850;
+    color:var(--primary);
+    margin:4px 0;
+    position:relative;
+    z-index:1;
+    font-variant-numeric:tabular-nums;
+}
+
+.hero-anticipo{
+    background:rgba(255,255,255,.08);
+    display:inline-block;
+    padding:6px 11px;
+    border-radius:18px;
+    font-size:.76rem;
+    margin-top:8px;
+    border:1px solid rgba(255,255,255,.13);
+    position:relative;
+    z-index:1;
+}
+
+@media (max-width:768px){
+    body{
+        padding:10px;
+    }
+
+    .container{
+        padding:17px 13px 20px;
+        border-radius:14px;
+    }
+
+    h1{
+        font-size:1.08rem;
+        letter-spacing:.12em;
+    }
+
+    .container > p{
+        font-size:.72rem!important;
+        line-height:1.4;
+        margin-bottom:15px!important;
+    }
+
+    .grid{
+        grid-template-columns:1fr;
+        gap:12px;
+    }
+
+    .grid > div:last-child{
+        order:-1;
+    }
+
+    .grid > div:last-child .section-title{
+        margin-top:4px;
+    }
+
+    .hero-price-box{
+        padding:19px 14px;
+    }
+
+    .hero-price-amount{
+        font-size:2.25rem;
+    }
+
+    .section-title{
+        margin-top:16px;
+    }
+
+    .input-group{
+        align-items:flex-start;
+        padding:10px;
+    }
+
+    .input-group label{
+        line-height:1.35;
+    }
+
+    .item-row{
+        align-items:center;
+        padding:9px;
+    }
+
+    .item-name{
+        line-height:1.35;
+    }
+
+    .item-row > div:last-child{
+        flex-shrink:0;
+    }
+
+    .result-card{
+        padding:13px 12px;
+    }
+
+    .result-row{
+        font-size:.79rem;
+    }
+}
+
+@media (max-width:390px){
+    body{
+        padding:7px;
+    }
+
+    .container{
+        padding:14px 10px 18px;
+    }
+
+    .item-name{
+        font-size:.77rem;
+    }
+
+    .item-cost{
+        width:62px;
+        margin-right:6px;
+    }
+
+    .hero-price-amount{
+        font-size:2rem;
+    }
+}
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>TENDO · Control Financiero</h1>
+    <p style="color: #64748b; font-size: 0.88rem; margin-bottom: 20px; font-weight: 600;">Configurador Maestro de Precios y Rendimiento Neto (Uso Exclusivo Dueño)</p>
+    
+    <div class="grid">
+        <!-- Columna Izquierda: Entradas -->
+        <div>
+            <!-- TIPO DE VENTA -->
+            <select id="tipoVenta" class="select-mode" style="background: #f8fafc; border-color: #cbd5e1; color: #475569; margin-bottom: 10px;" onchange="cambiarTipoVenta()">
+                <option value="kit">📦 Venta de Kit Completo</option>
+                <option value="suelto">🧩 Venta de Piezas Sueltas</option>
+            </select>
+
+            <!-- MODOS DE VENTA -->
+            <select id="modoVenta" class="select-mode" onchange="calcular()">
+                <option value="premium">🏅 Modo Premium (Utilidad 35%) - Sugerido</option>
+                <option value="estandar">👍 Modo Estándar (Utilidad 30%)</option>
+                <option value="regateo">🤝 Modo Regateo (Utilidad 25%) - Mínimo</option>
+            </select>
+
+            <!-- HARDWARE BASE FIJO -->
+            <div class="section-title">📦 1. Base Obligatoria</div>
+            <div class="input-group">
+                <label>💻 PC Reacondicionada SFF</label>
+                <input type="number" id="costoPC" value="3000" oninput="calcular()">
+            </div>
+            <div class="input-group">
+                <label>🔧 Servicio Config (MonoCaja $200 en kit / $700 suelto)</label>
+                <input type="number" id="costoEleventa" value="0" oninput="calcular()">
+            </div>
+
+            <!-- UPGRADES Y EXTRAS -->
+            <div class="section-title" style="margin-top: 25px;">⚡ 2. Upgrades (Editables)</div>
+            
+            <div class="item-row highlight">
+                <div class="item-name">🖨️ Impresora Térmica 58mm</div>
+                <div style="display:flex; align-items:center;">
+                    <span style="color:#64748b; margin-right:4px;">$</span>
+                    <input type="number" id="costoImp58" class="item-cost" value="360" oninput="calcular()">
+                    <label class="switch"><input type="checkbox" id="upImp58" checked onchange="calcular()"><span class="slider"></span></label>
+                </div>
+            </div>
+            
+            <div class="item-row highlight">
+                <div class="item-name">🛒 Lector de Códigos 1D</div>
+                <div style="display:flex; align-items:center;">
+                    <span style="color:#64748b; margin-right:4px;">$</span>
+                    <input type="number" id="costoLector" class="item-cost" value="300" oninput="calcular()">
+                    <label class="switch"><input type="checkbox" id="upLector" checked onchange="calcular()"><span class="slider"></span></label>
+                </div>
+            </div>
+            
+            <div class="item-row highlight">
+                <div class="item-name">💵 Cajón de Dinero</div>
+                <div style="display:flex; align-items:center;">
+                    <span style="color:#64748b; margin-right:4px;">$</span>
+                    <input type="number" id="costoCajon" class="item-cost" value="550" oninput="calcular()">
+                    <label class="switch"><input type="checkbox" id="upCajon" checked onchange="calcular()"><span class="slider"></span></label>
+                </div>
+            </div>
+            
+            <div class="item-row">
+                <div class="item-name">🖨️ (Pro) Impresora 80mm</div>
+                <div style="display:flex; align-items:center;">
+                    <span style="color:#64748b; margin-right:4px;">$</span>
+                    <input type="number" id="costoImp80" class="item-cost" value="800" oninput="calcular()">
+                    <label class="switch"><input type="checkbox" id="upImp80" onchange="calcular()"><span class="slider"></span></label>
+                </div>
+            </div>
+            
+            <div class="item-row">
+                <div class="item-name">⚖️ (Pro) Báscula USB</div>
+                <div style="display:flex; align-items:center;">
+                    <span style="color:#64748b; margin-right:4px;">$</span>
+                    <input type="number" id="costoBascula" class="item-cost" value="1300" oninput="calcular()">
+                    <label class="switch"><input type="checkbox" id="upBascula" onchange="calcular()"><span class="slider"></span></label>
+                </div>
+            </div>
+            
+            <div class="item-row">
+                <div class="item-name">📡 (Pro) Lector Bluetooth</div>
+                <div style="display:flex; align-items:center;">
+                    <span style="color:#64748b; margin-right:4px;">$</span>
+                    <input type="number" id="costoBT" class="item-cost" value="400" oninput="calcular()">
+                    <label class="switch"><input type="checkbox" id="upBT" onchange="calcular()"><span class="slider"></span></label>
+                </div>
+            </div>
+
+            <div class="item-row">
+                <div class="item-name">👆 (Pro) Monitor Touch</div>
+                <div style="display:flex; align-items:center;">
+                    <span style="color:#64748b; margin-right:4px;">$</span>
+                    <input type="number" id="costoTouch" class="item-cost" value="2000" oninput="calcular()">
+                    <label class="switch"><input type="checkbox" id="upTouch" onchange="calcular()"><span class="slider"></span></label>
+                </div>
+            </div>
+
+            <!-- GASTOS OPERATIVOS -->
+            <div class="section-title" style="margin-top: 25px;">⛽ 3. Operación y Comisiones</div>
+            <div class="input-group">
+                <label>🚗 Viáticos / Instalación</label>
+                <input type="number" id="costoViaticos" value="100" oninput="calcular()">
+            </div>
+            <div class="input-group">
+                <label>🏢 Gastos Fijos (Prorrateo / Renta)</label>
+                <input type="number" id="costoFijos" value="0" oninput="calcular()">
+            </div>
+
+            <div class="toggle-wrapper green" style="margin-top: 15px;">
+                <div class="toggle-label">Pagar a Vendedor (6%)</div>
+                <label class="switch"><input type="checkbox" id="pagoVendedor" onchange="calcular()"><span class="slider"></span></label>
+            </div>
+            <div class="toggle-wrapper green">
+                <div class="toggle-label">Pagar a Técnico Instalador (4%)</div>
+                <label class="switch"><input type="checkbox" id="pagoInstalador" onchange="calcular()"><span class="slider"></span></label>
+            </div>
+            <div class="toggle-wrapper" style="border-color: #bfdbfe; background: #eff6ff; margin-top:15px;">
+                <div class="toggle-label" style="color: #1e3a8a;">Facturar (Agregar 16% IVA al total)</div>
+                <label class="switch"><input type="checkbox" id="aplicaIVA" onchange="calcular()"><span class="slider"></span></label>
+            </div>
+        </div>
+
+        <!-- Columna Derecha: Resultados -->
+        <div>
+            <div class="section-title">📊 Ficha Financiera</div>
+            <div id="divResultados">
+                <!-- JS se inyecta aquí -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function formatearDinero(numero) {
+        return '$' + numero.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    }
+
+    function cambiarTipoVenta() {
+        const tipo = document.getElementById('tipoVenta').value;
+        if(tipo === 'suelto') {
+            document.getElementById('costoPC').value = 0;
+            document.getElementById('costoEleventa').value = 700; // Config suelta
+            document.getElementById('costoViaticos').value = 100; // Solo gasolina/entrega
+            document.getElementById('upImp58').checked = false;
+            document.getElementById('upLector').checked = false;
+            document.getElementById('upCajon').checked = false;
+            document.getElementById('upBT').checked = false;
+            document.getElementById('pagoInstalador').checked = false;
+        } else {
+            document.getElementById('costoPC').value = 3000;
+            document.getElementById('costoEleventa').value = 200; // Config en kit
+            document.getElementById('costoViaticos').value = 100;
+            document.getElementById('upImp58').checked = true;
+            document.getElementById('upLector').checked = true;
+            document.getElementById('upCajon').checked = true;
+        }
+        calcular();
+    }
+
+    function calcular() {
+        // 1. HARDWARE BASE Y UPGRADES
+        const pc = parseFloat(document.getElementById('costoPC').value) || 0;
+        const eleventa = parseFloat(document.getElementById('costoEleventa').value) || 0;
+        
+        let totalHardware = pc + eleventa;
+        
+        if(document.getElementById('upImp58').checked) {
+            totalHardware += parseFloat(document.getElementById('costoImp58').value) || 0;
+        }
+        if(document.getElementById('upLector').checked) {
+            totalHardware += parseFloat(document.getElementById('costoLector').value) || 0;
+        }
+        if(document.getElementById('upCajon').checked) {
+            totalHardware += parseFloat(document.getElementById('costoCajon').value) || 0;
+        }
+        if(document.getElementById('upImp80').checked) {
+            totalHardware += parseFloat(document.getElementById('costoImp80').value) || 0;
+        }
+        if(document.getElementById('upBascula').checked) {
+            totalHardware += parseFloat(document.getElementById('costoBascula').value) || 0;
+        }
+        if(document.getElementById('upBT').checked) {
+            totalHardware += parseFloat(document.getElementById('costoBT').value) || 0;
+        }
+        if(document.getElementById('upTouch').checked) {
+            totalHardware += parseFloat(document.getElementById('costoTouch').value) || 0;
+        }
+
+        // 2. RIESGO Y OPERACIÓN (Ajustado a la realidad local)
+        const tipoVenta = document.getElementById('tipoVenta').value;
+        const viaticos = parseFloat(document.getElementById('costoViaticos').value) || 0;
+        const gastosFijos = parseFloat(document.getElementById('costoFijos').value) || 0;
+        const garantiaFalla = tipoVenta === 'kit' ? 300 : 0; // Sin fondo de $300 para ventas sueltas
+        
+        const costoDirectoTotal = totalHardware + viaticos + gastosFijos + garantiaFalla;
+
+        // 3. FÓRMULA DE PRECIO (MODO DE VENTA - Ajustado para Obregón)
+        const modoVenta = document.getElementById('modoVenta').value;
+        let utilidadDeseada = 0.35; // Premium 35%
+        let modoTexto = "Premium (35%)";
+        if(modoVenta === 'estandar') { utilidadDeseada = 0.30; modoTexto = "Estándar (30%)"; }
+        if(modoVenta === 'regateo') { utilidadDeseada = 0.25; modoTexto = "Regateo (25%)"; }
+
+        // 4. COMISIONES
+        const usaVendedor = document.getElementById('pagoVendedor').checked;
+        const usaInstalador = document.getElementById('pagoInstalador').checked;
+
+        // FÓRMULA DE PRECIO (El cliente solo paga tu utilidad base)
+        // El dueño absorbe las comisiones para no disparar el precio al cliente
+        const divisor = 1 - utilidadDeseada;
+        let precioSugerido = costoDirectoTotal / divisor;
+        
+        // Redondeo hacia arriba (ej. $9,842 -> $9,900)
+        precioSugerido = Math.ceil(precioSugerido / 100) * 100;
+
+        // 5. IVA Y ANTICIPOS
+        const aplicaIVA = document.getElementById('aplicaIVA').checked;
+        const iva = aplicaIVA ? (precioSugerido * 0.16) : 0;
+        const precioTotalCliente = precioSugerido + iva;
+        
+        const anticipo = Math.ceil((precioTotalCliente * 0.65) / 100) * 100;
+
+        // 6. UTILIDAD REAL EN PESOS
+        const pagoVendedorPesos = usaVendedor ? (precioSugerido * 0.06) : 0; // 6%
+        const pagoInstaladorPesos = usaInstalador ? (precioSugerido * 0.04) : 0; // 4%
+        
+        // Ganancia Neta = Precio - (Todos los costos operativos reales + Comisiones)
+        const gananciaNeta = precioSugerido - costoDirectoTotal - pagoVendedorPesos - pagoInstaladorPesos;
+
+        // HTML INJECTION
+        let html = `
+            <div class="hero-price-box">
+                <div class="hero-price-label">PRECIO AL CLIENTE ${aplicaIVA ? '(CON IVA)' : ''}</div>
+                <div class="hero-price-amount">${formatearDinero(precioTotalCliente)}</div>
+                <div class="hero-anticipo">Anticipo Sugerido (65%): <strong>${formatearDinero(anticipo)}</strong></div>
+            </div>
+
+            <div class="result-card">
+                <div class="result-card-header">1. DESGLOSE DE COSTOS (LO QUE INVIERTES)</div>
+                <div class="result-row"><span>Total Hardware y Software:</span> <span>${formatearDinero(totalHardware)}</span></div>
+                <div class="result-row"><span>Fondo de Garantía (Fijo):</span> <span style="color:#d97706">${formatearDinero(garantiaFalla)}</span></div>
+                <div class="result-row"><span>Viáticos y Gastos Fijos:</span> <span>${formatearDinero(viaticos + gastosFijos)}</span></div>
+                <div class="result-row" style="border-top:1px solid #e2e8f0; padding-top:8px; margin-top:8px; font-weight:700;">
+                    <span>COSTO DIRECTO TOTAL:</span> <span>${formatearDinero(costoDirectoTotal)}</span>
+                </div>
+            </div>
+
+            <div class="result-card">
+                <div class="result-card-header">2. FÓRMULA DE PRECIO (MODO ${modoTexto})</div>
+                <div style="font-size:0.85rem; background:#e2e8f0; padding:10px; border-radius:6px; margin-bottom:12px; font-family:monospace;">
+                    Precio = Costo ÷ (1 - Utilidad)<br>
+                    Precio = ${formatearDinero(costoDirectoTotal)} ÷ (${(divisor).toFixed(2)})<br>
+                    <strong>Precio Sugerido = ${formatearDinero(precioSugerido)}</strong>
+                </div>
+                ${aplicaIVA ? `<div class="result-row" style="color:#0284c7;"><span>Separar IVA (SAT):</span> <span>-${formatearDinero(iva)}</span></div>` : ''}
+                ${usaVendedor ? `<div class="result-row" style="color:#9333ea;"><span>Pago Vendedor (6%):</span> <span>-${formatearDinero(pagoVendedorPesos)}</span></div>` : ''}
+                ${usaInstalador ? `<div class="result-row" style="color:#166534;"><span>Pago Instalador (4%):</span> <span>-${formatearDinero(pagoInstaladorPesos)}</span></div>` : ''}
+                
+                <div class="result-row" style="border-top:2px dashed #cbd5e1; padding-top:12px; margin-top:10px; font-weight:800; font-size:1.2rem;">
+                    <span>UTILIDAD NETA LIBRE:</span> <span style="color:#10b981;">${formatearDinero(gananciaNeta)}</span>
+                </div>
+            </div>
+
+            <div class="result-card" style="border: 1px solid #94a3b8;">
+                <div class="result-card-header" style="color:#0f172a;">3. ADMINISTRACIÓN (50-30-20)</div>
+                <div class="result-row" style="color:#0369a1; font-weight:600;"><span>🏠 Sueldo Dueño (50%):</span> <span>${formatearDinero(gananciaNeta * 0.50)}</span></div>
+                <div class="result-row" style="color:#b45309; font-weight:600;"><span>🔄 Caja Chica/OpEx (30%):</span> <span>${formatearDinero(gananciaNeta * 0.30)}</span></div>
+                <div class="result-row" style="color:#166534; font-weight:600;"><span>🏦 Fondo Expansión (20%):</span> <span>${formatearDinero(gananciaNeta * 0.20)}</span></div>
+            </div>
+        `;
+
+        document.getElementById('divResultados').innerHTML = html;
+    }
+
+    window.onload = calcular;
+</script>
+
+</body>
+</html>

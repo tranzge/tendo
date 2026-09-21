@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#F2F2F6">
+<title>Cotizador TENDO</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root{
+  --bg:#F2F2F6;
+  --surface:#FFFFFF;
+  --surface-tint:#F7F7F9;
+  --chip-bg:#EEEEF1;
+  --border:#E4E4E9;
+  --border-soft:#EFEFF2;
+  --ink:#17181C;
+  --ink-2:#6C6C74;
+  --ink-3:#AEAEB6;
+  --money:#A15C1C;
+  --money-ink:#8A5119;
+  --money-tint:rgba(161,92,28,0.09);
+  --money-border:rgba(161,92,28,0.28);
+  --success:#157F5A;
+  --success-ink:#0F6046;
+  --success-tint:rgba(21,127,90,0.08);
+  --success-border:rgba(21,127,90,0.22);
+  --danger:#C23B3B;
+  --radius-lg:20px;
+  --radius-md:14px;
+  --shadow-card:0 1px 2px rgba(15,15,20,0.05), 0 1px 1px rgba(15,15,20,0.03);
+  --shadow-bar:0 -1px 0 var(--border), 0 -8px 24px rgba(15,15,20,0.06);
+  --shadow-sheet:0 -10px 34px rgba(15,15,20,0.18);
+}
+*{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  padding-bottom:calc(108px + env(safe-area-inset-bottom,0px));
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+button{font-family:inherit;}
+p{max-width:60ch;}
+.icon{width:20px; height:20px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; display:block; flex-shrink:0;}
+
+/* Topbar compacta */
+.topbar{
+  position:sticky; top:0; z-index:40;
+  background:rgba(255,255,255,0.92);
+  backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:8px 16px calc(8px + env(safe-area-inset-top,0px));
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px;
+}
+.brand{display:flex; align-items:center; gap:8px; flex:1; min-width:0;}
+.brand-name{font-weight:700; font-size:0.95rem; color:var(--ink); line-height:1;}
+.topbar-actions{display:flex; align-items:center; gap:8px; flex-shrink:0;}
+.icon-btn{
+  width:34px; height:34px; border-radius:10px;
+  background:var(--surface-tint); border:1px solid var(--border);
+  color:var(--ink-2);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; transition:transform .12s ease, color .15s ease, border-color .15s ease;
+}
+.icon-btn:active{transform:scale(0.9); color:var(--danger); border-color:var(--danger);}
+.icon-btn .icon{width:17px; height:17px;}
+.commission-peek{
+  display:flex; align-items:center; gap:5px;
+  padding:6px 10px; border-radius:18px;
+  background:var(--money-tint); border:1px solid var(--money-border);
+  color:var(--money-ink); font-weight:600; font-size:0.76rem;
+  cursor:pointer; transition:transform .12s ease;
+}
+.commission-peek:active{transform:scale(0.95);}
+.commission-peek .icon{width:14px; height:14px; color:var(--money);}
+
+/* Container */
+.container{max-width:520px; margin:0 auto; padding:12px 16px 108px;}
+
+/* Trust row */
+.trust-row{
+  display:flex; align-items:flex-start; gap:10px;
+  background:var(--success-tint); border:1px solid var(--success-border);
+  border-radius:var(--radius-md); padding:12px 14px; margin-bottom:14px;
+}
+.trust-icon{
+  width:28px; height:28px; border-radius:8px; background:#fff;
+  border:1px solid var(--success-border);
+  display:flex; align-items:center; justify-content:center;
+  color:var(--success); flex-shrink:0;
+}
+.trust-icon .icon{width:15px; height:15px;}
+.trust-title{font-size:0.84rem; font-weight:700; color:var(--success-ink); margin-bottom:2px;}
+.trust-desc{font-size:0.74rem; color:#245245; line-height:1.4;}
+
+/* Segmented control */
+.segmented{position:relative; display:flex; background:var(--surface-tint); border:1px solid var(--border); border-radius:12px; padding:3px; margin-bottom:14px;}
+.seg-thumb{
+  position:absolute; top:3px; bottom:3px; left:0; width:0;
+  background:var(--surface); border-radius:9px;
+  box-shadow:0 1px 4px rgba(15,15,20,0.14);
+  transition:transform .28s cubic-bezier(.2,.8,.2,1), width .28s cubic-bezier(.2,.8,.2,1);
+  z-index:0;
+}
+.seg-btn{
+  position:relative; z-index:1; flex:1;
+  background:transparent; border:none; padding:8px 4px;
+  font-size:0.76rem; font-weight:600; color:var(--ink-2);
+  border-radius:9px; cursor:pointer; transition:color .2s ease;
+}
+.seg-btn.active{color:var(--ink);}
+
+/* Section note */
+.section-note{font-size:0.78rem; color:var(--ink-2); margin:4px 2px 10px; line-height:1.45;}
+.section-note-spaced{margin-top:18px;}
+
+/* Group card + rows */
+.group-card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-card); margin-bottom:6px;}
+.row{border-bottom:1px solid var(--border-soft);}
+.row:last-child{border-bottom:none;}
+.row-tap{display:flex; gap:12px; padding:12px; cursor:pointer; align-items:flex-start; transition:background .1s ease;}
+.row-tap:active{background:var(--surface-tint);}
+.row.active .row-tap{background:#FAFAFB;}
+
+.row-lead{margin-top:2px; flex-shrink:0;}
+.radio-dot,.check-box{
+  width:22px; height:22px; border-radius:50%;
+  border:1.6px solid #D6D6DC; background:#fff;
+  display:flex; align-items:center; justify-content:center;
+  transition:all .15s ease;
+}
+.check-box{border-radius:7px;}
+.row.active .radio-dot,.row.active .check-box{border-color:var(--ink); background:var(--ink);}
+.radio-dot::after{content:""; width:8px; height:8px; border-radius:50%; background:#fff; transform:scale(0); transition:transform .15s cubic-bezier(.34,1.56,.64,1);}
+.row.active .radio-dot::after{transform:scale(1);}
+.check-box .icon{width:13px; height:13px; color:#fff; opacity:0; transform:scale(0.5); stroke-width:3; transition:all .15s cubic-bezier(.34,1.56,.64,1);}
+.row.active .check-box .icon{opacity:1; transform:scale(1);}
+
+.row-body{flex:1; min-width:0;}
+.row-top{display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:4px;}
+.row-title-wrap{display:flex; align-items:center; gap:8px; flex:1; min-width:0;}
+.row-title-wrap .row-title{min-width:0;}
+.row-icon{width:24px; height:24px; border-radius:7px; background:var(--surface-tint); display:flex; align-items:center; justify-content:center; color:var(--ink-2); flex-shrink:0;}
+.row-icon .icon{width:14px; height:14px;}
+.row-title{font-size:0.9rem; font-weight:700; color:var(--ink); line-height:1.3;}
+.row-price{font-size:0.93rem; font-weight:700; color:var(--ink); white-space:nowrap; font-variant-numeric:tabular-nums; padding-top:2px;}
+.row-desc{font-size:0.76rem; color:var(--ink-2); line-height:1.45; margin-bottom:8px;}
+.row-chips{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:6px;}
+.chip{font-size:0.66rem; font-weight:600; padding:3px 8px; border-radius:6px;}
+.chip-positive{background:var(--success-tint); color:var(--success-ink);}
+.chip-info{background:var(--chip-bg); color:var(--ink-2);}
+.row-note{font-size:0.68rem; color:var(--ink-3); margin-bottom:4px;}
+.row-tip{display:flex; gap:7px; align-items:flex-start; background:var(--money-tint); border:1px dashed var(--money-border); border-radius:10px; padding:8px 10px; margin-top:6px; font-size:0.71rem; color:var(--money-ink); line-height:1.45;}
+.row-tip .icon{width:13px; height:13px; margin-top:1px; flex-shrink:0; color:var(--money);}
+
+/* Qty row */
+.qty-row{display:grid; grid-template-rows:0fr; transition:grid-template-rows .22s ease; padding:0 12px;}
+.row.active .qty-row{grid-template-rows:1fr;}
+.qty-row-inner{overflow:hidden;}
+.qty-row-inner-pad{display:flex; align-items:center; justify-content:space-between; gap:8px; padding:10px 0 12px; border-top:1px solid var(--border-soft); margin-top:2px;}
+.qty-label{font-size:0.74rem; color:var(--ink-2); font-weight:500;}
+.stepper{display:flex; align-items:center; background:var(--surface-tint); border:1px solid var(--border); border-radius:18px; overflow:hidden;}
+.stepper button{width:28px; height:26px; border:none; background:transparent; color:var(--ink); font-size:1rem; font-weight:600; cursor:pointer;}
+.stepper button:active{background:var(--ink); color:#fff;}
+.stepper span{min-width:22px; text-align:center; font-size:0.83rem; font-weight:700;}
+.qty-subtotal{font-size:0.83rem; font-weight:700; color:var(--success-ink); font-variant-numeric:tabular-nums; white-space:nowrap;}
+
+/* Bottom bar */
+.bottom-bar{
+  position:fixed; left:0; right:0; bottom:0; z-index:50;
+  background:rgba(255,255,255,0.96);
+  backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+  box-shadow:var(--shadow-bar);
+  padding:8px 16px calc(9px + env(safe-area-inset-bottom,0px));
+}
+.bottom-bar-inner{min-height:58px;}
+.bottom-total-value{font-size:1.32rem;}
+.bottom-actions{align-items:center;}
+.bottom-bar-inner{max-width:520px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:10px;}
+.bottom-total-label{font-size:0.66rem; color:var(--ink-2); font-weight:500; display:block;}
+.bottom-total-value{font-size:1.4rem; font-weight:700; color:var(--ink); line-height:1.1; font-variant-numeric:tabular-nums; display:block;}
+.bottom-total-count{font-size:0.66rem; color:var(--ink-3); font-weight:500; display:block;}
+.bottom-actions{display:flex; gap:8px; flex-shrink:0;}
+.btn-outline,.btn-filled,.btn-plain{border:none; border-radius:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:transform .1s ease;}
+.btn-outline:active,.btn-filled:active{transform:scale(0.96);}
+.btn-filled{background:var(--ink); color:#fff; padding:9px 14px; font-size:0.8rem;}
+.btn-filled.whatsapp{background:var(--success);}
+.btn-outline{background:#fff; color:var(--ink); border:1px solid var(--border); padding:9px 12px; font-size:0.8rem;}
+.btn-plain{background:transparent; color:var(--ink-2); padding:12px; font-size:0.85rem; width:100%;}
+.btn-filled.full,.btn-outline.full{width:100%; padding:13px; font-size:0.86rem; margin-bottom:8px;}
+.btn-outline .icon,.btn-filled .icon{width:15px; height:15px;}
+
+/* Sheets */
+.sheet-overlay{position:fixed; inset:0; background:rgba(10,10,14,0.42); z-index:100; display:none; opacity:0; transition:opacity .2s ease;}
+.sheet-overlay.active{display:block; opacity:1;}
+.sheet{
+  position:fixed; left:0; right:0; bottom:0; max-width:520px; margin:0 auto;
+  background:var(--surface); border-radius:22px 22px 0 0;
+  padding:12px 18px calc(20px + env(safe-area-inset-bottom,0px));
+  transform:translateY(100%); transition:transform .32s cubic-bezier(.19,1,.22,1);
+  max-height:88vh; overflow-y:auto; z-index:101;
+  box-shadow:var(--shadow-sheet);
+}
+.sheet-overlay.active .sheet{transform:translateY(0);}
+.sheet-handle{width:36px; height:4px; background:#DEDEE3; border-radius:10px; margin:0 auto 12px;}
+.sheet-header{margin-bottom:12px; display:flex; align-items:flex-start; gap:10px;}
+.sheet-header-icon{width:32px; height:32px; border-radius:9px; background:var(--surface-tint); display:flex; align-items:center; justify-content:center; color:var(--ink-2); flex-shrink:0;}
+.sheet-header-icon .icon{width:16px; height:16px;}
+.sheet-title{font-size:1rem; font-weight:700; margin-bottom:2px;}
+.sheet-desc{font-size:0.76rem; color:var(--ink-2); line-height:1.45;}
+
+/* Receipt */
+#receiptCapture{background:#fff; border-radius:14px; padding:18px 16px; margin-bottom:12px; border:1px solid var(--border);}
+.receipt-header{text-align:center; padding-bottom:10px; margin-bottom:10px; border-bottom:1.5px dashed #D9D9DE;}
+.receipt-brand{font-size:1.1rem; font-weight:700; color:var(--ink);}
+.receipt-sub{font-size:0.7rem; color:var(--ink-2); margin-top:2px;}
+.receipt-item{display:flex; justify-content:space-between; gap:8px; padding:6px 0; font-size:0.8rem; border-bottom:1px solid var(--chip-bg);}
+.receipt-item-title{font-weight:600; color:var(--ink);}
+.receipt-item-qty{display:inline-block; background:var(--chip-bg); color:var(--ink-2); font-size:0.66rem; font-weight:700; padding:1px 5px; border-radius:5px; margin-right:5px;}
+.receipt-item-price{font-weight:700; color:var(--ink); white-space:nowrap; font-variant-numeric:tabular-nums;}
+.receipt-total-row{display:flex; justify-content:space-between; align-items:center; border-top:1.5px solid var(--ink); padding-top:8px; margin-top:4px;}
+.receipt-total-label{font-size:0.8rem; font-weight:600; color:var(--ink-2);}
+.receipt-total-amt{font-size:1.4rem; font-weight:700; color:var(--ink); font-variant-numeric:tabular-nums;}
+.receipt-badge{background:var(--success-tint); color:var(--success-ink); font-size:0.72rem; font-weight:700; text-align:center; padding:8px; border-radius:10px; margin-top:10px; border:1px solid var(--success-border);}
+.receipt-legal{font-size:0.63rem; color:var(--ink-3); text-align:center; margin-top:8px; line-height:1.45;}
+.receipt-empty{text-align:center; padding:16px 0; color:var(--ink-2); font-size:0.83rem; line-height:1.5;}
+
+/* Commission drawer */
+.sheet-private .sheet-header-icon{color:var(--money); background:var(--money-tint);}
+.commission-card{background:var(--money-tint); border:1px solid var(--money-border); border-radius:14px; padding:16px; text-align:center; margin-bottom:12px;}
+.commission-label{font-size:0.74rem; color:var(--money-ink); font-weight:600; margin-bottom:8px;}
+.commission-reveal{background:none; border:none; cursor:pointer; display:inline-flex; flex-direction:column; align-items:center; gap:4px; padding:4px; width:100%;}
+.commission-amount{font-size:2rem; font-weight:700; color:var(--money); font-variant-numeric:tabular-nums; transition:filter .25s ease;}
+.commission-amount.blurred{filter:blur(9px);}
+.reveal-hint{font-size:0.7rem; color:var(--money-ink); font-weight:600; display:flex; align-items:center; gap:4px;}
+.reveal-hint .icon{width:12px; height:12px;}
+.commission-sub{font-size:0.76rem; color:var(--money-ink); font-weight:500; margin-top:2px;}
+
+.toggle-row{background:var(--surface-tint); border:1px solid var(--border); border-radius:12px; padding:11px 13px; display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; cursor:pointer;}
+.toggle-title{font-size:0.82rem; font-weight:600; color:var(--ink);}
+.toggle-sub{font-size:0.68rem; color:var(--ink-2); margin-top:2px;}
+
+.switch{position:relative; display:inline-block; width:46px; height:26px; flex-shrink:0;}
+.switch input{opacity:0; width:0; height:0;}
+.slider{position:absolute; cursor:pointer; inset:0; background:#DADAE0; transition:.2s; border-radius:34px;}
+.slider::before{position:absolute; content:""; height:20px; width:20px; left:3px; bottom:3px; background:#fff; transition:.2s; border-radius:50%; box-shadow:0 1px 3px rgba(0,0,0,0.2);}
+input:checked + .slider{background:var(--success);}
+input:checked + .slider::before{transform:translateX(20px);}
+
+.info-note{background:var(--surface-tint); border-radius:11px; padding:10px 12px; margin-bottom:14px; font-size:0.74rem; color:var(--ink-2); line-height:1.5;}
+
+/* Mobile UX refinements */
+@media (max-width:560px){
+  .topbar{padding-left:12px; padding-right:12px;}
+  .container{padding:10px 12px 0;}
+  .brand-name{font-size:.9rem;}
+  .commission-peek{padding:6px 9px;}
+  .trust-row{padding:11px 12px; margin-bottom:12px;}
+  .segmented{margin-bottom:12px;}
+  .seg-btn{padding:9px 4px; font-size:.75rem;}
+
+  .group-card{border-radius:16px; margin-bottom:4px;}
+  .row-tap{gap:9px; padding:11px 10px;}
+  .row-top{gap:7px;}
+  .row-title-wrap{gap:7px;}
+  .row-title{font-size:.86rem;}
+  .row-price{font-size:.88rem; flex:0 0 auto;}
+  .row-desc{font-size:.74rem; margin-bottom:7px;}
+  .row-chips{gap:5px;}
+  .chip{font-size:.63rem; padding:3px 7px;}
+  .row-tip{font-size:.69rem; padding:7px 8px;}
+
+  .bottom-bar{padding-left:12px; padding-right:12px;}
+  .bottom-bar-inner{gap:8px;}
+  .bottom-total-label,.bottom-total-count{font-size:.62rem;}
+  .bottom-total-value{font-size:1.28rem;}
+  .bottom-actions{gap:6px;}
+  .btn-outline{padding:9px 11px;}
+  .btn-filled{padding:9px 12px;}
+
+  .sheet{padding-left:14px; padding-right:14px; max-height:92vh;}
+}
+
+/* Prevent the fixed quote bar from ever obscuring the final product card. */
+@media (max-width:560px){
+  .container{padding-left:12px; padding-right:12px; padding-bottom:112px;}
+}
+
+@media (max-width:380px){
+  .brand-name{font-size:.84rem;}
+  .commission-peek span:not(.icon){font-size:.7rem;}
+  .bottom-total-value{font-size:1.18rem;}
+  .btn-filled{padding-left:10px; padding-right:10px;}
+  .btn-outline{padding-left:9px; padding-right:9px;}
+}
+
+
+/* TENDO BRAND SYSTEM */
+:root{
+  --bg:#F5F6F5;
+  --surface:#FFFFFF;
+  --surface-tint:#F0F2F1;
+  --chip-bg:#E9ECEB;
+  --border:#D9DDDB;
+  --border-soft:#E9EBEA;
+  --ink:#0B1015;
+  --ink-2:#596168;
+  --ink-3:#969DA2;
+  --money:#00A98F;
+  --money-ink:#087766;
+  --money-tint:rgba(0,169,143,.09);
+  --money-border:rgba(0,169,143,.28);
+  --success:#00A98F;
+  --success-ink:#087766;
+  --success-tint:rgba(0,169,143,.08);
+  --success-border:rgba(0,169,143,.22);
+  --danger:#C23B3B;
+  --radius-lg:16px;
+  --radius-md:12px;
+  --shadow-card:0 1px 2px rgba(11,16,21,.05),0 8px 24px rgba(11,16,21,.035);
+  --shadow-bar:0 -1px 0 var(--border),0 -8px 24px rgba(11,16,21,.07);
+  --shadow-sheet:0 -10px 34px rgba(11,16,21,.18);
+}
+
+body{
+  background:var(--bg);
+  color:var(--ink);
+  letter-spacing:.005em;
+}
+
+.topbar{
+  background:rgba(255,255,255,.94);
+  border-bottom:1px solid #DDE1DF;
+}
+
+.brand-name{
+  font-size:1rem;
+  font-weight:800;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+
+.brand-name::after{
+  content:"";
+  display:inline-block;
+  width:7px;
+  height:7px;
+  margin-left:3px;
+  border-radius:50%;
+  background:#00A98F;
+  vertical-align:middle;
+  box-shadow:0 0 0 3px rgba(0,169,143,.08);
+}
+
+.commission-peek{
+  color:#087766;
+  background:rgba(0,169,143,.07);
+  border-color:rgba(0,169,143,.24);
+}
+
+.trust-row{
+  background:#F2F7F5;
+  border-color:rgba(0,169,143,.22);
+}
+
+.trust-icon{
+  color:#00A98F;
+  border-color:rgba(0,169,143,.22);
+}
+
+.trust-title{
+  color:#087766;
+}
+
+.trust-desc{
+  color:#3F6159;
+}
+
+.segmented{
+  background:#E9ECEB;
+  border-color:#D8DCDA;
+}
+
+.seg-thumb{
+  background:#0B1015;
+  box-shadow:0 2px 7px rgba(11,16,21,.18);
+}
+
+.seg-btn{
+  color:#667078;
+}
+
+.seg-btn.active{
+  color:#fff;
+}
+
+.group-card{
+  border-color:#DDE1DF;
+  box-shadow:var(--shadow-card);
+}
+
+.row.active .row-tap{
+  background:#F4F9F7;
+}
+
+.row.active .radio-dot,
+.row.active .check-box{
+  border-color:#00A98F;
+  background:#00A98F;
+}
+
+.row-icon{
+  background:#F0F2F1;
+  color:#4E575E;
+}
+
+.row-price{
+  color:#0B1015;
+  font-weight:800;
+}
+
+.chip-positive{
+  background:rgba(0,169,143,.10);
+  color:#087766;
+}
+
+.row-tip{
+  background:rgba(0,169,143,.055);
+  border-color:rgba(0,169,143,.28);
+  color:#087766;
+}
+
+.row-tip .icon{
+  color:#00A98F;
+}
+
+.stepper button:active{
+  background:#0B1015;
+}
+
+.qty-subtotal{
+  color:#087766;
+}
+
+.bottom-bar{
+  background:rgba(255,255,255,.96);
+}
+
+.btn-filled{
+  background:#0B1015;
+}
+
+.btn-filled.whatsapp{
+  background:#00A98F;
+}
+
+.btn-outline{
+  color:#0B1015;
+  border-color:#D7DCDA;
+}
+
+.sheet-header-icon{
+  color:#087766;
+}
+
+.receipt-brand{
+  font-weight:800;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+}
+
+.receipt-badge{
+  background:rgba(0,169,143,.08);
+  color:#087766;
+  border-color:rgba(0,169,143,.22);
+}
+
+.commission-card{
+  background:rgba(0,169,143,.07);
+  border-color:rgba(0,169,143,.25);
+}
+
+.commission-amount{
+  color:#00A98F;
+}
+
+input:checked + .slider{
+  background:#00A98F;
+}
+
+/* TENDO: más editorial, limpio y compacto en móvil */
+@media (max-width:560px){
+  .topbar{
+    padding-top:9px;
+    padding-bottom:9px;
+  }
+
+  .brand-name{
+    font-size:.88rem;
+    letter-spacing:.16em;
+  }
+
+  .section-note{
+    text-transform:none;
+    letter-spacing:.01em;
+  }
+
+  .row-title{
+    font-weight:750;
+  }
+
+  .row-price{
+    font-size:.87rem;
+  }
+
+  .bottom-total-value{
+    font-weight:800;
+  }
+}
+
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-name">TENDO</div>
+  </div>
+  <div class="topbar-actions">
+    <button class="icon-btn" onclick="limpiarTodoConConfirmacion()" aria-label="Limpiar todo" title="Limpiar todo">
+      <span data-icon="reset"></span>
+    </button>
+    <button class="commission-peek" onclick="openDrawer('commissionDrawer')" aria-label="Ver mi comisión">
+      <span data-icon="lock"></span>
+      <span>Comisión</span>
+    </button>
+  </div>
+</header>
+
+<main class="container">
+
+  <section class="trust-row">
+    <div class="trust-icon"><span data-icon="shield"></span></div>
+    <div>
+      <p class="trust-title">100% contra entrega</p>
+      <p class="trust-desc">El cliente paga solo cuando el equipo esté instalado y cobrando en su mostrador.</p>
+    </div>
+  </section>
+
+  <nav class="segmented" id="segmented">
+    <div class="seg-thumb" id="segThumb"></div>
+    <button class="seg-btn active" id="seg-kits" onclick="cambiarSeccion('kits')">Kits</button>
+    <button class="seg-btn" id="seg-software" onclick="cambiarSeccion('software')">Software</button>
+    <button class="seg-btn" id="seg-piezas" onclick="cambiarSeccion('piezas')">Piezas</button>
+  </nav>
+
+  <div id="sectionBody"></div>
+
+</main>
+
+<div class="bottom-bar">
+  <div class="bottom-bar-inner">
+    <div>
+      <span class="bottom-total-label">Total</span>
+      <span class="bottom-total-value" id="bottomTotalDisplay">$0</span>
+      <span class="bottom-total-count" id="selectedCountText">Sin artículos</span>
+    </div>
+    <div class="bottom-actions">
+      <button class="btn-outline" onclick="openDrawer('receiptDrawer')" title="Ver ticket">
+        <span data-icon="receipt"></span>
+      </button>
+      <button class="btn-filled whatsapp" onclick="enviarWhatsAppDirecto()" title="Enviar por WhatsApp">
+        <span data-icon="chat"></span><span>Enviar</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- DRAWER: TICKET PARA EL CLIENTE -->
+<div class="sheet-overlay" id="receiptDrawer" onclick="closeDrawerOutside(event,'receiptDrawer')">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <div class="sheet-header-icon"><span data-icon="receipt"></span></div>
+      <div>
+        <p class="sheet-title">Cotización para el cliente</p>
+        <p class="sheet-desc">Descarga o comparte por WhatsApp.</p>
+      </div>
+    </div>
+
+    <div id="receiptCapture">
+      <div class="receipt-header">
+        <div class="receipt-brand">TENDO</div>
+        <div class="receipt-sub">Soluciones de punto de venta · Ciudad Obregón, Sonora</div>
+      </div>
+      <div class="receipt-list" id="receiptItemsList"></div>
+      <div class="receipt-total-row">
+        <span class="receipt-total-label">Total a invertir</span>
+        <span class="receipt-total-amt" id="receiptTotalVal">$0</span>
+      </div>
+      <div class="receipt-badge">100% contra entrega — paga al verlo funcionando</div>
+      <div class="receipt-legal">
+        Vigencia 15 días. Sujeta a disponibilidad.<br>
+        Garantía e instalación incluidas.<br>
+        Licencia Eleventa se cotiza aparte con el proveedor.
+      </div>
+    </div>
+
+    <button class="btn-filled full" id="btnScreenshot" onclick="descargarScreenshot()">
+      <span data-icon="camera"></span><span id="btnScreenshotLabel">Guardar imagen</span>
+    </button>
+    <button class="btn-outline full whatsapp-outline" onclick="enviarWhatsAppDirecto()">
+      <span data-icon="chat"></span><span>Enviar por WhatsApp</span>
+    </button>
+    <button class="btn-plain" onclick="closeDrawer('receiptDrawer')">Cerrar</button>
+  </div>
+</div>
+
+<!-- DRAWER: ZONA PRIVADA DEL VENDEDOR -->
+<div class="sheet-overlay" id="commissionDrawer" onclick="closeDrawerOutside(event,'commissionDrawer')">
+  <div class="sheet sheet-private">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <div class="sheet-header-icon"><span data-icon="lock"></span></div>
+      <div>
+        <p class="sheet-title">Tu comisión en esta venta</p>
+        <p class="sheet-desc">Información privada. No aparece en el ticket.</p>
+      </div>
+    </div>
+
+    <div class="commission-card">
+      <p class="commission-label">Estimado para esta venta</p>
+      <button class="commission-reveal" onclick="toggleCommissionReveal()">
+        <span class="commission-amount blurred" id="drawerCommissionVal">$0.00</span>
+        <span class="reveal-hint" id="revealHint"><span data-icon="eye"></span>Toca para mostrar</span>
+      </button>
+      <p class="commission-sub" id="commissionSubtitleText">6% por cierre de venta</p>
+    </div>
+
+    <label class="toggle-row">
+      <div>
+        <p class="toggle-title">Yo instalo el equipo</p>
+        <p class="toggle-sub">+4% comisión técnica + $100 viáticos</p>
+      </div>
+      <div class="switch">
+        <input type="checkbox" id="checkInstalaVendedor" onchange="recalcularTodo()">
+        <span class="slider"></span>
+      </div>
+    </label>
+
+    <div class="info-note">Tu comisión se liquida dentro de 24 horas hábiles después de que el cliente pague y firme conformidad.</div>
+
+    <button class="btn-filled full" onclick="closeDrawer('commissionDrawer')">Entendido</button>
+  </div>
+</div>
+
+<script>
+/* ICONOS */
+const ICONS = {
+  reset: '<polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>',
+  lock: '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+  shield: '<path d="M12 3 L19 6 L19 12 C19 16.6 16 19.6 12 21 C8 19.6 5 16.6 5 12 L5 6 Z"/><polyline points="9 12 11 14 15 9.5"/>',
+  box: '<path d="M16.5 9.4 L7.5 4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>',
+  printer: '<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>',
+  scale: '<rect x="4" y="9" width="16" height="11" rx="2"/><circle cx="12" cy="14.5" r="3"/><line x1="9" y1="9" x2="9" y2="6"/><line x1="15" y1="9" x2="15" y2="6"/>',
+  wireless: '<path d="M7 7 L17 17 L12 21 L12 3 L17 7 L7 17"/>',
+  monitor: '<rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>',
+  wrench: '<path d="M14.7 6.3 A4 4 0 1 1 9.7 11.3 L4 17 L7 20 L12.7 14.3 A4 4 0 1 1 14.7 6.3 Z"/>',
+  scan: '<line x1="4" y1="6" x2="4" y2="18"/><line x1="7.4" y1="6" x2="7.4" y2="18"/><line x1="10.8" y1="6" x2="10.8" y2="18" stroke-width="3"/><line x1="14.6" y1="6" x2="14.6" y2="18"/><line x1="18" y1="6" x2="18" y2="18" stroke-width="3"/>',
+  drawer: '<rect x="3" y="7" width="18" height="12" rx="1.5"/><line x1="3" y1="11" x2="21" y2="11"/><rect x="10" y="13.3" width="4" height="1.8" rx="0.5"/>',
+  chat: '<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>',
+  receipt: '<path d="M6 2 L18 2 L18 22 L15 20 L12 22 L9 20 L6 22 Z"/><line x1="8.5" y1="7" x2="15.5" y2="7"/><line x1="8.5" y1="10.5" x2="15.5" y2="10.5"/><line x1="8.5" y1="14" x2="13" y2="14"/>',
+  check: '<polyline points="20 6 9 17 4 12"/>',
+  camera: '<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>',
+  eye: '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>',
+  bulb: '<line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/><path d="M12 2 A7 7 0 0 0 8 14.5 C8.8 15.1 9 16 9 16.8 L9 17 L15 17 L15 16.8 C15 16 15.2 15.1 16 14.5 A7 7 0 0 0 12 2 Z"/>'
+};
+function icon(name){return '<svg class="icon" viewBox="0 0 24 24">' + (ICONS[name] || '') + '</svg>';}
+function mountIcons(){document.querySelectorAll('[data-icon]').forEach(function(el){el.innerHTML = icon(el.dataset.icon);});}
+
+/* CATÁLOGO */
+const CATALOGO = {
+  'kit-mono': { id:'kit-mono', name:'Kit POS MonoCaja', desc:'PC reacondicionada, impresora 58 mm, lector 1D, cajón automático. Instalación y capacitación.', price:7150, icon:'box', isRadio:true, group:'kit-choice', qtyUnit:'Kits', chips:[{type:'positive',text:'Listo para cobrar'},{type:'info',text:'1 caja'}], note:'Licencia Eleventa aparte.' },
+  'kit-multi': { id:'kit-multi', name:'Kit POS MultiCaja', desc:'Igual a MonoCaja pero con red local para 2+ cajas con base compartida.', price:7350, icon:'box', isRadio:true, group:'kit-choice', qtyUnit:'Kits', chips:[{type:'info',text:'2+ cajas'},{type:'info',text:'Red local'}], note:'Licencia Eleventa aparte.' },
+
+  'up-imp80': { id:'up-imp80', name:'Upgrade a impresora 80 mm', desc:'Cambia la de 58 mm por la Pro de 80 mm con autocorte y papel ancho.', price:1250, priceLabel:'+$1,250', icon:'printer', isRadio:false, qtyUnit:'Cantidad', chips:[{type:'positive',text:'Autocorte'}], tip:'Para negocios con tickets largos: abarrotes, restaurantes.' },
+  'up-bascula': { id:'up-bascula', name:'Báscula digital integrada', desc:'El peso pasa directo a la pantalla, sin teclear nada.', price:2300, icon:'scale', isRadio:false, qtyUnit:'Cantidad', chips:[{type:'positive',text:'Por kilo'}], tip:'Para fruterías y carnicerías.' },
+  'up-bt': { id:'up-bt', name:'Lector Bluetooth inalámbrico', desc:'Escanea sin cargar el producto al mostrador.', price:650, icon:'wireless', isRadio:false, qtyUnit:'Cantidad', tip:'Para bodegas y mostradores grandes.' },
+  'up-touch': { id:'up-touch', name:'Monitor touchscreen 15"', desc:'Pantalla táctil para cobrar con el dedo.', price:2800, icon:'monitor', isRadio:false, qtyUnit:'Cantidad', note:'Disponibilidad limitada.', tip:'Para mostrador pequeño o imagen moderna.' },
+
+  'conf-mono': { id:'conf-mono', name:'Configuración MonoCaja', desc:'Instalación, activación Eleventa, enlaces, capacitación.', price:700, icon:'wrench', isRadio:true, group:'soft-choice', qtyUnit:'Equipos', chips:[{type:'positive',text:'Solo servicio'},{type:'info',text:'1 equipo'}] },
+  'conf-multi': { id:'conf-multi', name:'Configuración MultiCaja', desc:'Servidor, red local, sincronización de terminales.', price:1100, icon:'wrench', isRadio:true, group:'soft-choice', qtyUnit:'Redes', chips:[{type:'positive',text:'Red y servidor'}] },
+
+  'pza-pc': { id:'pza-pc', name:'PC reacondicionada SFF', desc:'Core i5/i3, 8GB RAM, SSD, monitor 19", teclado, mouse.', price:4800, icon:'monitor', isRadio:false, qtyUnit:'Cantidad' },
+  'pza-imp80': { id:'pza-imp80', name:'Impresora 80 mm', desc:'Uso rudo con autocorte, USB para comandas.', price:1900, icon:'printer', isRadio:false, qtyUnit:'Cantidad' },
+  'pza-imp58': { id:'pza-imp58', name:'Impresora 58 mm', desc:'Compacta USB para tickets estándar.', price:650, icon:'printer', isRadio:false, qtyUnit:'Cantidad' },
+  'pza-lec1d': { id:'pza-lec1d', name:'Lector 1D', desc:'Pistola láser USB de alta velocidad.', price:550, icon:'scan', isRadio:false, qtyUnit:'Cantidad' },
+  'pza-cajon': { id:'pza-cajon', name:'Cajón automático', desc:'Metálico de 4 billetes y 8 monedas, RJ11.', price:950, icon:'drawer', isRadio:false, qtyUnit:'Cantidad' },
+  'pza-bt': { id:'pza-bt', name:'Lector Bluetooth', desc:'Inalámbrico para bodegas o distancia.', price:650, icon:'wireless', isRadio:false, qtyUnit:'Cantidad' },
+  'pza-bascula': { id:'pza-bascula', name:'Báscula digital USB', desc:'Para pesaje exacto de frutas, verduras, carnes.', price:2300, icon:'scale', isRadio:false, qtyUnit:'Cantidad' },
+  'pza-touch': { id:'pza-touch', name:'Monitor touchscreen 15"', desc:'Táctil de grado comercial con base metálica.', price:2800, icon:'monitor', isRadio:false, qtyUnit:'Cantidad' }
+};
+
+/* ESTADO */
+function defaultsFor(section){
+  if(section === 'kits') return { 'kit-mono': { active:true, qty:1 } };
+  if(section === 'software') return { 'conf-mono': { active:true, qty:1 } };
+  return {};
+}
+let seccionActual = 'kits';
+let estadoSeleccion = defaultsFor(seccionActual);
+
+function formatoMoneda(num){
+  return '$' + num.toLocaleString('es-MX', { minimumFractionDigits:0, maximumFractionDigits:0 });
+}
+
+/* RENDER */
+function rowHTML(item){
+  const chipsHtml = (item.chips && item.chips.length)
+    ? '<div class="row-chips">' + item.chips.map(function(c){ return '<span class="chip chip-' + c.type + '">' + c.text + '</span>'; }).join('') + '</div>'
+    : '';
+  const noteHtml = item.note ? '<p class="row-note">' + item.note + '</p>' : '';
+  const tipHtml = item.tip ? '<div class="row-tip">' + icon('bulb') + '<span>' + item.tip + '</span></div>' : '';
+  const tap = item.isRadio ? ("selectRadio('" + item.id + "')") : ("toggleMultiItem('" + item.id + "')");
+  const lead = item.isRadio ? '<span class="radio-dot"></span>' : ('<span class="check-box">' + icon('check') + '</span>');
+  const priceDisplay = item.priceLabel || formatoMoneda(item.price);
+
+  return ''
+    + '<div class="row" id="card-' + item.id + '">'
+    +   '<div class="row-tap" onclick="' + tap + '">'
+    +     '<span class="row-lead">' + lead + '</span>'
+    +     '<div class="row-body">'
+    +       '<div class="row-top">'
+    +         '<span class="row-title-wrap"><span class="row-icon">' + icon(item.icon) + '</span><span class="row-title">' + item.name + '</span></span>'
+    +         '<span class="row-price">' + priceDisplay + '</span>'
+    +       '</div>'
+    +       '<p class="row-desc">' + item.desc + '</p>'
+    +       chipsHtml
+    +       noteHtml
+    +       tipHtml
+    +     '</div>'
+    +   '</div>'
+    +   '<div class="qty-row"><div class="qty-row-inner"><div class="qty-row-inner-pad">'
+    +     '<span class="qty-label">' + item.qtyUnit + '</span>'
+    +     '<div class="stepper">'
+    +       '<button type="button" onclick="cambiarCantidad(\'' + item.id + '\', -1)">\u2212</button>'
+    +       '<span id="qty-' + item.id + '">1</span>'
+    +       '<button type="button" onclick="cambiarCantidad(\'' + item.id + '\', 1)">+</button>'
+    +     '</div>'
+    +     '<span class="qty-subtotal" id="sub-' + item.id + '">' + formatoMoneda(item.price) + '</span>'
+    +   '</div></div></div>'
+    + '</div>';
+}
+function groupCard(ids){
+  return '<div class="group-card">' + ids.map(function(id){ return rowHTML(CATALOGO[id]); }).join('') + '</div>';
+}
+function sectionHTML(section){
+  if(section === 'kits'){
+    return ''
+      + '<p class="section-note">Elige el paquete principal.</p>'
+      + groupCard(['kit-mono','kit-multi'])
+      + '<p class="section-note section-note-spaced">Upgrades opcionales.</p>'
+      + groupCard(['up-imp80','up-bascula','up-bt','up-touch']);
+  }
+  if(section === 'software'){
+    return ''
+      + '<p class="section-note">El cliente ya tiene equipo. Elige configuración.</p>'
+      + groupCard(['conf-mono','conf-multi']);
+  }
+  if(section === 'piezas'){
+    return ''
+      + '<p class="section-note">Piezas individuales. Puedes agregar varias cantidades.</p>'
+      + groupCard(['pza-pc','pza-imp80','pza-imp58','pza-lec1d','pza-cajon','pza-bt','pza-bascula','pza-touch']);
+  }
+  return '';
+}
+
+/* SECCIONES */
+function updateThumb(){
+  const activeBtn = document.querySelector('.seg-btn.active');
+  const container = document.getElementById('segmented');
+  const thumb = document.getElementById('segThumb');
+  if(!activeBtn || !container || !thumb) return;
+  const cRect = container.getBoundingClientRect();
+  const bRect = activeBtn.getBoundingClientRect();
+  thumb.style.width = bRect.width + 'px';
+  thumb.style.transform = 'translateX(' + (bRect.left - cRect.left) + 'px)';
+}
+function cambiarSeccion(nueva){
+  if(seccionActual === nueva) return;
+  document.querySelectorAll('.seg-btn').forEach(function(b){ b.classList.toggle('active', b.id === 'seg-' + nueva); });
+  seccionActual = nueva;
+  estadoSeleccion = defaultsFor(nueva);
+  document.getElementById('sectionBody').innerHTML = sectionHTML(nueva);
+  actualizarVistasCards();
+  recalcularTodo();
+  updateThumb();
+}
+
+/* SELECCIÓN */
+function selectRadio(id){
+  const item = CATALOGO[id];
+  if(estadoSeleccion[id] && estadoSeleccion[id].active) return;
+  Object.keys(CATALOGO).forEach(function(otherId){
+    if(CATALOGO[otherId].group === item.group) delete estadoSeleccion[otherId];
+  });
+  estadoSeleccion[id] = { active:true, qty:1 };
+  actualizarVistasCards();
+  recalcularTodo();
+}
+function toggleMultiItem(id){
+  if(estadoSeleccion[id] && estadoSeleccion[id].active){
+    delete estadoSeleccion[id];
+  } else {
+    estadoSeleccion[id] = { active:true, qty:1 };
+  }
+  actualizarVistasCards();
+  recalcularTodo();
+}
+function cambiarCantidad(id, delta){
+  if(!estadoSeleccion[id] || !estadoSeleccion[id].active){
+    if(delta > 0) estadoSeleccion[id] = { active:true, qty:1 };
+  } else {
+    estadoSeleccion[id].qty += delta;
+    if(estadoSeleccion[id].qty <= 0) delete estadoSeleccion[id];
+  }
+  actualizarVistasCards();
+  recalcularTodo();
+}
+function actualizarVistasCards(){
+  Object.keys(CATALOGO).forEach(function(id){
+    const card = document.getElementById('card-' + id);
+    if(!card) return;
+    const itemData = estadoSeleccion[id];
+    const isActive = itemData && itemData.active && itemData.qty > 0;
+    const qtyEl = document.getElementById('qty-' + id);
+    const subEl = document.getElementById('sub-' + id);
+    if(isActive){
+      card.classList.add('active');
+      if(qtyEl) qtyEl.textContent = itemData.qty;
+      if(subEl) subEl.textContent = formatoMoneda(CATALOGO[id].price * itemData.qty);
+    } else {
+      card.classList.remove('active');
+      if(qtyEl) qtyEl.textContent = 1;
+      if(subEl) subEl.textContent = formatoMoneda(CATALOGO[id].price);
+    }
+  });
+}
+
+/* CÁLCULO */
+function recalcularTodo(){
+  let total = 0, totalItemsCount = 0, totalPiezasCount = 0;
+  const receiptList = document.getElementById('receiptItemsList');
+  receiptList.innerHTML = '';
+
+  Object.keys(estadoSeleccion).forEach(function(id){
+    const sel = estadoSeleccion[id];
+    if(sel && sel.active && sel.qty > 0){
+      const item = CATALOGO[id];
+      const subtotal = item.price * sel.qty;
+      total += subtotal;
+      totalItemsCount++;
+      totalPiezasCount += sel.qty;
+
+      const row = document.createElement('div');
+      row.className = 'receipt-item';
+      row.innerHTML = '<div class="receipt-item-title"><span class="receipt-item-qty">' + sel.qty + 'x</span>' + item.name + '</div><span class="receipt-item-price">' + formatoMoneda(subtotal) + '</span>';
+      receiptList.appendChild(row);
+    }
+  });
+
+  if(totalItemsCount === 0){
+    receiptList.innerHTML = '<div class="receipt-empty">Sin artículos.<br>Selecciona un paquete.</div>';
+  }
+
+  document.getElementById('bottomTotalDisplay').textContent = formatoMoneda(total);
+  document.getElementById('receiptTotalVal').textContent = formatoMoneda(total);
+  document.getElementById('selectedCountText').textContent =
+    totalItemsCount === 0 ? 'Sin artículos' :
+    totalItemsCount === 1 ? ('1 producto (' + totalPiezasCount + ' pza)') :
+    (totalItemsCount + ' productos (' + totalPiezasCount + ' pzas)');
+
+  const vendedorInstala = document.getElementById('checkInstalaVendedor').checked;
+  let porcentaje = 0.06, viaticos = 0;
+  if(vendedorInstala && total > 0){ porcentaje += 0.04; viaticos = 100; }
+  const comisionTotal = (total * porcentaje) + viaticos;
+
+  document.getElementById('drawerCommissionVal').textContent = '$' + comisionTotal.toLocaleString('es-MX', { minimumFractionDigits:2, maximumFractionDigits:2 });
+  document.getElementById('commissionSubtitleText').textContent = vendedorInstala
+    ? '10% total (6% venta + 4% instalación) + $100 viáticos'
+    : '6% por cierre de venta';
+}
+
+function limpiarTodoConConfirmacion(){
+  estadoSeleccion = defaultsFor(seccionActual);
+  actualizarVistasCards();
+  recalcularTodo();
+}
+
+/* DRAWERS */
+function openDrawer(id){
+  document.getElementById(id).classList.add('active');
+  document.body.style.overflow = 'hidden';
+  if(id === 'commissionDrawer'){
+    document.getElementById('drawerCommissionVal').classList.add('blurred');
+    document.getElementById('revealHint').innerHTML = icon('eye') + 'Toca para mostrar';
+  }
+}
+function closeDrawer(id){
+  document.getElementById(id).classList.remove('active');
+  document.body.style.overflow = 'auto';
+}
+function closeDrawerOutside(e, id){
+  if(e.target.id === id) closeDrawer(id);
+}
+function toggleCommissionReveal(){
+  const val = document.getElementById('drawerCommissionVal');
+  const hint = document.getElementById('revealHint');
+  const isNowBlurred = val.classList.toggle('blurred');
+  hint.innerHTML = isNowBlurred ? (icon('eye') + 'Toca para mostrar') : (icon('eye') + 'Toca para ocultar');
+}
+
+/* EXPORTAR */
+function descargarScreenshot(){
+  const receipt = document.getElementById('receiptCapture');
+  const label = document.getElementById('btnScreenshotLabel');
+  const original = label.textContent;
+  label.textContent = 'Generando...';
+  html2canvas(receipt, { scale:3, backgroundColor:'#ffffff' }).then(function(canvas){
+    const link = document.createElement('a');
+    link.download = 'Cotizacion_TENDO_' + Date.now() + '.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    label.textContent = original;
+  }).catch(function(err){
+    console.error(err);
+    alert('No se pudo generar la imagen. Intenta captura manual.');
+    label.textContent = original;
+  });
+}
+function enviarWhatsAppDirecto(){
+  let total = 0, listaTexto = '', count = 0;
+  Object.keys(estadoSeleccion).forEach(function(id){
+    const sel = estadoSeleccion[id];
+    if(sel && sel.active && sel.qty > 0){
+      const item = CATALOGO[id];
+      const subtotal = item.price * sel.qty;
+      total += subtotal;
+      count++;
+      listaTexto += '\u2022 *' + sel.qty + 'x ' + item.name + '*: ' + formatoMoneda(subtotal) + '\n';
+    }
+  });
+  if(count === 0){
+    alert('Selecciona al menos un paquete.');
+    return;
+  }
+  const mensaje =
+'\u26A1 *COTIZACION -- TENDO*\n' +
+'_Punto de venta en Ciudad Obregon_\n\n' +
+'Hola, le comparto la propuesta para su negocio:\n\n' +
+listaTexto + '\n' +
+'\uD83D\uDCB0 *Total: ' + formatoMoneda(total) + ' MXN*\n\n' +
+'\u2705 *100% contra entrega*\n' +
+'_(Paga solo cuando este funcionando en su mostrador)_\n' +
+'Incluye garantia e instalacion.\n\n' +
+'Agendo la instalacion para esta semana?';
+  const url = 'https://wa.me/?text=' + encodeURIComponent(mensaje);
+  window.open(url, '_blank');
+}
+
+/* INIT */
+function initSection(){
+  document.getElementById('sectionBody').innerHTML = sectionHTML(seccionActual);
+  actualizarVistasCards();
+  recalcularTodo();
+  updateThumb();
+}
+window.addEventListener('DOMContentLoaded', function(){
+  mountIcons();
+  initSection();
+});
+window.addEventListener('resize', updateThumb);
+</script>
+</body>
+</html>

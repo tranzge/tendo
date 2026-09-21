@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TENDO — Tecnología para negocios</title>
+<meta name="description" content="TENDO: tecnología, punto de venta, computación, instalación y soporte para negocios.">
+<style>
+:root{
+ --black:#0d1010;--ink:#151918;--green:#00b894;--gray:#65706d;--line:#e7eae8;
+ --soft:#f4f6f5;--max:1280px
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:#fff;color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+a{color:inherit;text-decoration:none}.container{width:min(calc(100% - 48px),var(--max));margin:auto}
+header{height:76px;background:rgba(255,255,255,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+.nav{height:100%;display:flex;align-items:center;gap:42px}.logo{font-size:28px;font-weight:950;letter-spacing:-2px;display:flex;align-items:center}
+.o{width:25px;height:25px;border:7px solid var(--ink);border-radius:50%;position:relative;margin-left:1px}.o:after{content:"";position:absolute;width:7px;height:7px;background:var(--green);border-radius:50%;left:2px;top:2px}
+nav{display:flex;gap:28px;flex:1;font-size:14px;font-weight:650;color:#4f5655}nav a:hover{color:var(--ink)}
+.top-cta{background:var(--black);color:#fff;padding:12px 19px;border-radius:3px;font-size:12px;font-weight:850}
+
+.hero{padding:28px 0 0}.hero-grid{display:grid;grid-template-columns:.82fr 1.18fr;min-height:590px;border-radius:7px;overflow:hidden;background:var(--black);box-shadow:0 22px 55px rgba(13,16,16,.12)}
+.hero-copy{padding:58px 55px;display:flex;flex-direction:column;justify-content:center;background:#fff}
+.eyebrow{font-size:11px;font-weight:900;letter-spacing:.16em;color:#59605f;margin-bottom:22px}
+h1{font-size:clamp(48px,6vw,86px);line-height:.9;letter-spacing:-.075em;margin:0 0 26px}h1 em{font-style:normal;color:var(--green)}
+.hero-copy p{font-size:18px;line-height:1.5;color:var(--gray);max-width:530px;margin:0 0 28px}
+.buttons{display:flex;gap:10px;flex-wrap:wrap}.btn{display:inline-block;padding:14px 20px;border:1px solid var(--ink);border-radius:3px;font-size:12px;font-weight:900}.btn.primary{background:var(--black);color:#fff}
+.product-pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:23px}.product-pills span{border:1px solid #dfe3e1;border-radius:999px;padding:8px 10px;font-size:10px;font-weight:850;color:#555d5b}
+
+.hero-photo{position:relative;min-height:590px;background:#151918;overflow:hidden}
+.hero-photo img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(.72) contrast(1.08)}
+.hero-photo:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(13,16,16,.65),rgba(13,16,16,.02) 55%),linear-gradient(0deg,rgba(13,16,16,.42),transparent 45%)}
+.photo-tag{position:absolute;z-index:2;left:28px;top:25px;color:#fff;font-size:10px;font-weight:900;letter-spacing:.15em}
+.photo-caption{position:absolute;z-index:2;left:28px;bottom:28px;color:#fff;max-width:300px}.photo-caption strong{display:block;font-size:25px;letter-spacing:-.04em}.photo-caption span{color:#c8cecc;font-size:12px}
+
+.trust{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--line)}
+.trust div{padding:18px 18px 18px 0;font-size:11px;font-weight:850;letter-spacing:.08em;color:#505856}.trust div+div{padding-left:18px;border-left:1px solid var(--line)}.trust span{color:var(--green);margin-right:7px}
+
+.section{padding:88px 0;border-bottom:1px solid var(--line)}.section-head{display:flex;justify-content:space-between;align-items:end;gap:40px;margin-bottom:40px}
+h2{font-size:clamp(39px,5vw,65px);line-height:.92;letter-spacing:-.065em;margin:0}.section-head p{max-width:430px;color:var(--gray);line-height:1.5;margin:0}
+
+.categories{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.card{min-height:270px;background:#fff;border:1px solid var(--line);border-radius:6px;padding:25px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 8px 25px rgba(16,18,20,.045);transition:.2s}
+.card:hover{transform:translateY(-4px);box-shadow:0 14px 32px rgba(16,18,20,.08)}.card-num{font-size:10px;font-weight:900;color:var(--green);letter-spacing:.13em}
+.icon{width:48px;height:48px;border:8px solid var(--ink);border-radius:50%;position:relative}.icon:after{content:"";position:absolute;width:11px;height:11px;background:var(--green);border-radius:50%;left:5px;top:5px}
+.card h3{font-size:26px;letter-spacing:-.045em;margin:0 0 8px}.card p{font-size:14px;line-height:1.45;color:var(--gray);margin:0}.arrow{font-size:20px;font-weight:900;margin-top:18px}
+
+.visual-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:16px}.photo-card{position:relative;min-height:420px;border-radius:6px;overflow:hidden;background:#111}
+.photo-card img{width:100%;height:100%;object-fit:cover;display:block}.photo-card:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(10,12,12,.76),transparent 58%)}
+.photo-copy{position:absolute;z-index:2;left:28px;bottom:26px;color:#fff}.photo-copy h3{font-size:34px;letter-spacing:-.05em;margin:0 0 7px}.photo-copy p{color:#c7cdca;max-width:370px;margin:0;font-size:13px;line-height:1.45}
+.side-stack{display:grid;grid-template-rows:1fr 1fr;gap:16px}.side-card{position:relative;border-radius:6px;overflow:hidden;min-height:202px}.side-card img{width:100%;height:100%;object-fit:cover}.side-card:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(10,12,12,.8),transparent 70%)}.side-copy{position:absolute;z-index:2;left:22px;bottom:20px;color:#fff}.side-copy strong{font-size:22px;letter-spacing:-.04em}.side-copy span{display:block;color:#c5cbc8;font-size:11px;margin-top:3px}
+
+.hardware{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.hardware-card{background:#f5f7f6;border:1px solid var(--line);border-radius:6px;overflow:hidden}.hardware-img{height:230px;overflow:hidden}.hardware-img img{width:100%;height:100%;object-fit:cover;display:block}.hardware-body{padding:23px}.hardware-body small{color:var(--green);font-size:10px;font-weight:900;letter-spacing:.12em}.hardware-body h3{font-size:25px;margin:9px 0 7px;letter-spacing:-.04em}.hardware-body p{font-size:13px;color:var(--gray);line-height:1.45;margin:0}
+
+.service-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.service{padding:30px;min-height:205px;background:#fff;border:1px solid var(--line);border-radius:6px;box-shadow:0 8px 25px rgba(16,18,20,.04)}
+.service-num{font-size:10px;font-weight:900;color:var(--green);letter-spacing:.13em}.service h3{font-size:24px;letter-spacing:-.04em;margin:45px 0 8px}.service p{font-size:14px;color:var(--gray);line-height:1.45;margin:0}
+
+.black-section{background:#111414;color:#fff;padding:90px 0}.black-grid{display:grid;grid-template-columns:1fr .65fr;gap:80px;align-items:end}.black-section h2{max-width:780px}.black-section p{color:#aeb4b1;line-height:1.55;max-width:450px;margin:0}.black-section .btn{background:#fff;color:var(--ink);border-color:#fff;margin-top:22px}
+footer{padding:27px 0;color:#727876;font-size:12px}.footer-row{display:flex;justify-content:space-between}
+
+@media(max-width:900px){
+ nav{display:none}.hero-grid{grid-template-columns:1fr}.hero-photo{min-height:430px}.categories{grid-template-columns:1fr 1fr}.visual-grid{grid-template-columns:1fr}.hardware{grid-template-columns:1fr 1fr}.service-grid{grid-template-columns:1fr 1fr}.trust{grid-template-columns:1fr 1fr}.black-grid{grid-template-columns:1fr;gap:30px}
+}
+@media(max-width:560px){
+ .container{width:calc(100% - 30px)}.top-cta{display:none}.hero{padding-top:15px}.hero-copy{padding:42px 25px}.hero-photo{min-height:340px}.categories,.hardware,.service-grid,.trust{grid-template-columns:1fr}.trust div+div{border-left:0;border-top:1px solid var(--line);padding-left:0}.section{padding:65px 0}.section-head{display:block}.section-head p{margin-top:20px}.side-stack{grid-template-rows:220px 220px}.footer-row{display:block}.footer-row div+div{margin-top:8px}
+}
+
+/* TENDO motion layer */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
+.reveal.in-view{opacity:1;transform:none}
+.reveal-delay-1{transition-delay:.08s}.reveal-delay-2{transition-delay:.16s}.reveal-delay-3{transition-delay:.24s}
+.hero-photo img,.photo-card img,.side-card img{transform:scale(1.04);transition:transform 1.2s cubic-bezier(.2,.7,.2,1)}
+.parallax-media{will-change:transform}
+.tech-grid{
+ position:absolute;inset:0;pointer-events:none;opacity:.14;
+ background-image:linear-gradient(rgba(255,255,255,.22) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.22) 1px,transparent 1px);
+ background-size:52px 52px;
+ mask-image:linear-gradient(to right,transparent 0%,black 35%,black 100%);
+}
+.signal{
+ position:absolute;right:34px;top:32px;width:8px;height:8px;background:var(--green);border-radius:50%;
+ box-shadow:0 0 0 0 rgba(0,184,148,.5);animation:pulse 2.4s infinite;
+ z-index:3
+}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,184,148,.35)}50%{box-shadow:0 0 0 11px rgba(0,184,148,0)}}
+.hero-photo .photo-caption{transition:transform .6s ease}
+.card,.hardware-card,.service{transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease}
+.card:hover,.hardware-card:hover,.service:hover{transform:translateY(-7px);box-shadow:0 18px 38px rgba(16,18,20,.09);border-color:#d4d9d7}
+.btn{transition:transform .2s ease,background .2s ease,color .2s ease}
+.btn:hover{transform:translateY(-2px)}
+@media(prefers-reduced-motion:reduce){
+ *,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}
+ .reveal{opacity:1;transform:none}
+ .hero-photo img,.photo-card img,.side-card img{transform:none}
+}
+
+
+/* TENDO scroll choreography */
+.scroll-stage{position:relative}
+.scroll-stage .stage-pin{position:sticky;top:76px;height:calc(100vh - 76px);min-height:620px;display:grid;align-items:center}
+.story-layout{display:grid;grid-template-columns:.7fr 1.3fr;gap:70px;align-items:center}
+.story-copy{position:relative}
+.story-kicker{font-size:11px;font-weight:900;letter-spacing:.16em;color:var(--green);margin-bottom:18px}
+.story-copy h2{max-width:520px}
+.story-copy p{color:var(--gray);max-width:430px;line-height:1.55;margin-top:22px}
+.story-steps{margin-top:34px;display:grid;gap:9px}
+.story-step{border:1px solid var(--line);border-radius:5px;padding:14px 16px;background:#fff;color:#7a817e;font-size:12px;font-weight:800;transition:.45s ease}
+.story-step.active{background:var(--black);color:#fff;border-color:var(--black);transform:translateX(8px)}
+.story-visual{height:min(68vh,590px);min-height:430px;background:#111414;border-radius:8px;position:relative;overflow:hidden;box-shadow:0 25px 70px rgba(16,18,20,.16)}
+.story-visual .scene-img{position:absolute;inset:-5%;width:110%;height:110%;object-fit:cover;opacity:0;transform:scale(1.09);transition:opacity .65s ease,transform 1s cubic-bezier(.2,.7,.2,1)}
+.story-visual .scene-img.active{opacity:1;transform:scale(1)}
+.scene-overlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,10,10,.72),transparent 65%),linear-gradient(0deg,rgba(8,10,10,.55),transparent 55%);z-index:2;pointer-events:none}
+.scene-ui{position:absolute;z-index:3;right:24px;top:24px;width:155px;padding:12px;border:1px solid rgba(255,255,255,.2);background:rgba(10,12,12,.58);backdrop-filter:blur(10px);color:#fff;font-size:9px;letter-spacing:.08em}
+.scene-ui b{display:block;color:var(--green);font-size:10px;margin-bottom:8px}
+.scene-ui i{display:block;height:4px;background:rgba(255,255,255,.17);margin:6px 0}
+.scene-ui i:nth-child(3){width:72%}.scene-ui i:nth-child(4){width:46%}
+.scene-label{position:absolute;z-index:3;left:25px;bottom:24px;color:#fff}
+.scene-label strong{display:block;font-size:30px;letter-spacing:-.05em}.scene-label span{color:#c1c7c4;font-size:12px}
+.progress-line{position:absolute;left:25px;right:25px;bottom:16px;height:2px;background:rgba(255,255,255,.18);z-index:4}
+.progress-line span{display:block;height:100%;width:0;background:var(--green);transition:width .35s ease}
+
+.horizontal-wrap{height:290vh;position:relative}
+.horizontal-pin{position:sticky;top:76px;height:calc(100vh - 76px);overflow:hidden;display:flex;align-items:center}
+.horizontal-track{display:flex;gap:18px;will-change:transform}
+.horizontal-card{flex:0 0 min(55vw,650px);height:min(66vh,520px);border-radius:7px;overflow:hidden;position:relative;background:#111}
+.horizontal-card img{width:100%;height:100%;object-fit:cover;display:block}
+.horizontal-card:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(8,10,10,.78),transparent 60%)}
+.horizontal-card-content{position:absolute;z-index:2;left:28px;bottom:25px;color:#fff}.horizontal-card-content small{color:var(--green);font-weight:900;letter-spacing:.12em}.horizontal-card-content h3{font-size:36px;letter-spacing:-.055em;margin:8px 0 0}
+
+.magnetic-dot{position:fixed;z-index:50;pointer-events:none;width:7px;height:7px;border-radius:50%;background:var(--green);opacity:0;transform:translate(-50%,-50%);transition:opacity .2s}
+@media(max-width:900px){
+ .story-layout{grid-template-columns:1fr;gap:25px}.scroll-stage .stage-pin{height:auto;position:relative;padding:65px 0}.story-visual{height:55vh}.horizontal-wrap{height:auto}.horizontal-pin{height:auto;overflow:visible}.horizontal-track{overflow:auto;padding-bottom:20px;transform:none!important}.horizontal-card{flex-basis:82vw}
+}
+@media(max-width:560px){.story-visual{min-height:360px}.story-step.active{transform:none}.scene-ui{display:none}}
+@media(prefers-reduced-motion:reduce){
+ .story-visual .scene-img{transition:none}.story-step{transition:none}.horizontal-track{transform:none!important}
+}
+
+
+/* Mobile-first polish: TENDO should feel like a native-quality mobile site */
+@media(max-width:900px){
+  body{overflow-x:hidden}
+  .container{width:min(calc(100% - 32px),var(--max))}
+  header{height:68px}
+  .nav{gap:0;justify-content:space-between}
+  .logo{font-size:25px}.o{width:23px;height:23px;border-width:6px}.o:after{width:6px;height:6px}
+  .top-cta{display:block;padding:10px 14px;font-size:10px}
+  .hero{padding-top:14px}
+  .hero-grid{min-height:0;display:flex;flex-direction:column;border-radius:6px}
+  .hero-copy{padding:36px 24px 30px;order:1}
+  .eyebrow{font-size:9px;margin-bottom:17px}
+  h1{font-size:clamp(44px,13vw,68px);line-height:.9;margin-bottom:20px}
+  .hero-copy p{font-size:16px;line-height:1.45;margin-bottom:22px}
+  .buttons{display:grid;grid-template-columns:1fr 1fr}
+  .btn{text-align:center;padding:13px 10px;font-size:10px}
+  .product-pills{gap:6px;margin-top:17px}
+  .product-pills span{font-size:8px;padding:6px 8px}
+  .hero-photo{order:2;min-height:330px;height:58vw;max-height:390px}
+  .photo-tag{font-size:8px;left:18px;top:18px}
+  .photo-caption{left:18px;bottom:18px;max-width:250px}
+  .photo-caption strong{font-size:22px}
+  .photo-caption span{font-size:10px}
+  .signal{right:20px;top:20px}
+  .trust{grid-template-columns:1fr 1fr}
+  .trust div{font-size:9px;padding:14px 10px}
+  .trust div+div{padding-left:10px}
+  .trust div:nth-child(3){border-left:0;border-top:1px solid var(--line);padding-left:0}
+  .trust div:nth-child(4){border-top:1px solid var(--line)}
+  .section{padding:62px 0}
+  .section-head{display:block;margin-bottom:28px}
+  h2{font-size:clamp(37px,11vw,55px)}
+  .section-head p{font-size:14px;line-height:1.5;margin-top:17px}
+  .categories{grid-template-columns:1fr 1fr;gap:9px}
+  .card{min-height:220px;padding:17px;border-radius:5px}
+  .card-num{font-size:8px}
+  .icon{width:38px;height:38px;border-width:6px}
+  .icon:after{width:8px;height:8px;left:4px;top:4px}
+  .card h3{font-size:21px;margin-bottom:6px}
+  .card p{font-size:11px;line-height:1.4}
+  .arrow{font-size:17px;margin-top:10px}
+  .visual-grid{display:flex;flex-direction:column;gap:10px}
+  .photo-card{min-height:330px}
+  .side-stack{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:none;gap:10px}
+  .side-card{min-height:190px}
+  .photo-copy{left:18px;bottom:18px}.photo-copy h3{font-size:27px}.photo-copy p{font-size:11px}
+  .side-copy{left:14px;bottom:14px}.side-copy strong{font-size:17px}.side-copy span{font-size:9px}
+  .hardware{grid-template-columns:1fr;gap:12px}
+  .hardware-card{display:grid;grid-template-columns:43% 57%;min-height:150px}
+  .hardware-img{height:100%;min-height:150px}
+  .hardware-body{padding:18px}
+  .hardware-body small{font-size:8px}
+  .hardware-body h3{font-size:21px;margin:7px 0}
+  .hardware-body p{font-size:11px}
+  .service-grid{grid-template-columns:1fr;gap:10px}
+  .service{min-height:150px;padding:21px}
+  .service h3{font-size:21px;margin:28px 0 7px}
+  .service p{font-size:12px}
+  .black-section{padding:65px 0}
+  .black-grid{display:block}
+  .black-section h2{font-size:clamp(40px,12vw,58px)}
+  .black-section p{font-size:14px;margin-top:24px}
+  .black-section .btn{width:100%;margin-top:24px}
+  footer{padding:22px 0}
+  .footer-row{display:flex;flex-direction:column;gap:7px}
+  /* Story section: keep the scroll interaction but make it compact */
+  .scroll-stage .stage-pin{position:relative;height:auto;min-height:0;padding:62px 0}
+  .story-layout{display:flex;flex-direction:column;gap:24px}
+  .story-copy h2{font-size:clamp(37px,11vw,55px)}
+  .story-copy p{font-size:14px;margin-top:17px}
+  .story-steps{margin-top:22px;gap:6px}
+  .story-step{padding:11px 12px;font-size:10px}
+  .story-step.active{transform:none}
+  .story-visual{width:100%;height:72vw;min-height:300px;max-height:420px;border-radius:6px}
+  .scene-ui{right:14px;top:14px;width:125px;padding:9px;font-size:7px}
+  .scene-ui b{font-size:8px}
+  .scene-label{left:17px;bottom:20px}
+  .scene-label strong{font-size:25px}.scene-label span{font-size:10px}
+  .progress-line{left:17px;right:17px;bottom:11px}
+  /* On phones, horizontal stories become a swipeable rail, avoiding awkward vertical pinning */
+  .horizontal-wrap{height:auto;padding:0 0 8px}
+  .horizontal-pin{height:auto;overflow:visible;display:block}
+  .horizontal-track{
+    overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;
+    gap:10px;padding:4px 2px 18px;transform:none!important;
+    scrollbar-width:none;-webkit-overflow-scrolling:touch
+  }
+  .horizontal-track::-webkit-scrollbar{display:none}
+  .horizontal-card{flex:0 0 84vw;height:62vw;min-height:290px;max-height:400px;scroll-snap-align:start}
+  .horizontal-card-content{left:18px;bottom:18px}
+  .horizontal-card-content h3{font-size:28px}
+}
+@media(max-width:420px){
+  .container{width:calc(100% - 26px)}
+  .hero-copy{padding:31px 19px 25px}
+  .hero-photo{min-height:290px}
+  .buttons{grid-template-columns:1fr}
+  .product-pills span:nth-child(n+4){display:none}
+  .categories{grid-template-columns:1fr}
+  .card{min-height:190px}
+  .side-stack{grid-template-columns:1fr}
+  .side-card{min-height:210px}
+  .hardware-card{grid-template-columns:1fr}
+  .hardware-img{height:190px}
+}
+
+</style>
+</head>
+<body>
+<header><div class="container nav">
+<a class="logo" href="#">TEND<span class="o"></span></a>
+<nav><a href="#soluciones">Soluciones</a><a href="#equipamiento">Equipamiento</a><a href="#instalacion">Instalación</a><a href="#tendo">TENDO</a></nav>
+<a class="top-cta" href="#cotizar">COTIZAR</a>
+</div></header>
+
+<main>
+<section class="hero"><div class="container hero-grid">
+<div class="hero-copy">
+<div class="eyebrow">TECNOLOGÍA PARA NEGOCIOS</div>
+<h1>EQUIPA TU NEGOCIO.<br><em>HAZLO FUNCIONAR.</em></h1>
+<p>Punto de venta, computación, instalación y soporte. Tecnología práctica, configurada y lista para trabajar.</p>
+<div class="buttons"><a class="btn primary" href="#equipamiento">VER EQUIPAMIENTO</a><a class="btn" href="#cotizar">COTIZAR</a></div>
+<div class="product-pills"><span>TERMINALES</span><span>IMPRESORAS</span><span>LECTORES</span><span>CAJONES</span><span>COMPUTADORAS</span></div>
+</div>
+<div class="hero-photo">
+<img class="parallax-media" src="https://www.srkinnovations.com/cdn/shop/files/3_4f948e7d-0138-4324-8fc7-e7b15d48a59f.jpg?v=1779447883&width=1445" alt="Estación moderna de punto de venta con terminal, impresora y lector">
+<div class="tech-grid"></div><div class="signal"></div><div class="photo-tag">TENDO / PUNTO DE VENTA</div>
+<div class="photo-caption"><strong>HARDWARE QUE SE VE.</strong><span>Una estación completa de operación, no una pantalla aislada.</span></div>
+</div>
+</div>
+<div class="container trust">
+<div><span>●</span>VENTA DE EQUIPO</div><div><span>●</span>INSTALACIÓN</div><div><span>●</span>CONFIGURACIÓN</div><div><span>●</span>SOPORTE</div>
+</div></section>
+
+<section class="section reveal" id="soluciones"><div class="container">
+<div class="section-head"><h2>SOLUCIONES PARA<br>LA OPERACIÓN.</h2><p>Equipamiento y servicios pensados alrededor de cómo funciona realmente un negocio.</p></div>
+<div class="categories">
+<article class="card reveal"><div><div class="card-num">01 / POS</div><div class="icon"></div></div><div><h3>Punto de venta</h3><p>Terminales, impresoras, lectores, cajones y periféricos.</p><div class="arrow">↗</div></div></article>
+<article class="card reveal"><div><div class="card-num">02 / PC</div><div class="icon"></div></div><div><h3>Computación</h3><p>Equipos, accesorios, mantenimiento y configuración.</p><div class="arrow">↗</div></div></article>
+<article class="card reveal"><div><div class="card-num">03 / INFRA</div><div class="icon"></div></div><div><h3>Infraestructura</h3><p>Conectividad, periféricos e instalación tecnológica.</p><div class="arrow">↗</div></div></article>
+<article class="card reveal"><div><div class="card-num">04 / SERVICE</div><div class="icon"></div></div><div><h3>Soporte</h3><p>Mantenimiento, ajustes y atención cuando lo necesitas.</p><div class="arrow">↗</div></div></article>
+</div>
+</div></section>
+
+<section class="section reveal" id="equipamiento"><div class="container">
+<div class="section-head"><h2>ASÍ SE VE<br>CUANDO FUNCIONA.</h2><p>En lugar de inventar renders, aquí la página puede mostrar hardware real instalado en negocios.</p></div>
+<div class="visual-grid">
+<div class="photo-card"><img src="https://static.wixstatic.com/media/cc9f84_c1e3d9d028c24d108055c46c1921d3b1~mv2.png/v1/fill/w_980%2Ch_653%2Cal_c%2Cq_90%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/POS%20terminal%20setup%20with%20cables.png" alt="Instalación de terminal POS, impresora y lector"><div class="photo-copy"><h3>Una instalación limpia.</h3><p>Terminal, impresora, lector y conectividad trabajando como una sola estación.</p></div></div>
+<div class="side-stack">
+<div class="side-card"><img src="https://ikrorwxhnnqnlr5p-static.micyjz.com/cloud/lqBprKoploSRrlklmjjpjq/pos-terminals-for-small-bussiness.png" alt="Sistema POS completo en mostrador"><div class="side-copy"><strong>Punto de venta completo.</strong><span>Terminal + impresora + cajón + lector.</span></div></div>
+<div class="side-card"><img src="https://www.kinettix.com/hs-fs/hubfs/POS_03.jpg?height=858&name=POS_03.jpg&width=1170" alt="Técnico instalando sistema POS"><div class="side-copy"><strong>Instalación y puesta en marcha.</strong><span>El equipo no se queda en la caja.</span></div></div>
+</div>
+</div>
+</div></section>
+
+<section class="section"><div class="container">
+<div class="section-head"><h2>HARDWARE<br>REAL.</h2><p>Estas tarjetas muestran cómo podríamos presentar productos y categorías cuando tengas tus propias fotografías.</p></div>
+<div class="hardware">
+<article class="hardware-card reveal"><div class="hardware-img"><img src="https://www.srkinnovations.com/cdn/shop/files/3_4f948e7d-0138-4324-8fc7-e7b15d48a59f.jpg?v=1779447883&width=1445" alt="Terminal POS"></div><div class="hardware-body"><small>01 / TERMINALES</small><h3>Estaciones POS</h3><p>Terminales y equipos todo en uno para mostrador.</p></div></article>
+<article class="hardware-card reveal"><div class="hardware-img"><img src="https://static.wixstatic.com/media/cc9f84_c1e3d9d028c24d108055c46c1921d3b1~mv2.png/v1/fill/w_980%2Ch_653%2Cal_c%2Cq_90%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/POS%20terminal%20setup%20with%20cables.png" alt="Impresora y terminal POS"></div><div class="hardware-body"><small>02 / PERIFÉRICOS</small><h3>Impresión y lectura</h3><p>Impresoras térmicas, lectores y accesorios.</p></div></article>
+<article class="hardware-card reveal"><div class="hardware-img"><img src="https://sbcash.com/cdn/shop/products/POS-systems-service-tech-installing-at-counter_800x.jpg?v=1605213732" alt="Técnico trabajando en un POS"></div><div class="hardware-body"><small>03 / SERVICIO</small><h3>Instalación técnica</h3><p>Configuración, mantenimiento y soporte en sitio.</p></div></article>
+</div>
+</div></section>
+
+<section class="section reveal" id="instalacion"><div class="container">
+<div class="section-head"><h2>NO TERMINA<br>EN LA CAJA.</h2><p>Comprar el equipo es solo el comienzo. TENDO se encarga de que quede instalado, configurado y listo.</p></div>
+<div class="service-grid">
+<article class="service reveal"><div class="service-num">01 / INSTALAR</div><h3>Lo ponemos en su lugar.</h3><p>Montaje, conexión y puesta en marcha.</p></article>
+<article class="service reveal"><div class="service-num">02 / CONFIGURAR</div><h3>Lo dejamos listo.</h3><p>Periféricos y ajustes necesarios para operar.</p></article>
+<article class="service reveal"><div class="service-num">03 / RESPALDAR</div><h3>Seguimos contigo.</h3><p>Mantenimiento, soporte y atención posterior.</p></article>
+</div>
+</div></section>
+
+<section class="section reveal" id="tendo"><div class="container">
+<div class="section-head"><h2>TECNOLOGÍA<br>PRÁCTICA.</h2><p>TENDO comienza con punto de venta y computación y puede crecer hacia infraestructura y nuevas soluciones para negocios.</p></div>
+</div></section>
+
+<section class="black-section reveal" id="cotizar"><div class="container black-grid">
+<div><h2>¿QUÉ NECESITA<br>TU NEGOCIO?</h2><a class="btn" href="https://wa.me/5210000000000?text=Hola%20TENDO,%20quiero%20cotizar%20equipo%20para%20mi%20negocio.">COTIZAR POR WHATSAPP</a></div>
+<p>Cuéntanos qué quieres equipar, qué equipo ya tienes o qué problema necesitas resolver. Podemos ayudarte con punto de venta, computación, instalación, configuración y soporte.</p>
+</div></section>
+</main>
+<footer><div class="container footer-row"><div><strong>TENDO</strong> — Tecnología para negocios</div><div>© 2026 TENDO · México</div></div></footer>
+
+<script>
+(() => {
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const items = document.querySelectorAll('.reveal');
+  if (!reduced && 'IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, {threshold:.12, rootMargin:'0px 0px -50px 0px'});
+    items.forEach(el => observer.observe(el));
+  } else {
+    items.forEach(el => el.classList.add('in-view'));
+  }
+
+  if (!reduced) {
+    const media = document.querySelector('.hero-photo .parallax-media');
+    const hero = document.querySelector('.hero-photo');
+    const caption = document.querySelector('.hero-photo .photo-caption');
+
+    if (media && hero) {
+      let ticking = false;
+      const update = () => {
+        const rect = hero.getBoundingClientRect();
+        const progress = Math.max(-1, Math.min(1, (window.innerHeight/2 - (rect.top + rect.height/2)) / window.innerHeight));
+        media.style.transform = `scale(1.06) translate3d(0, ${progress * -18}px, 0)`;
+        if (caption) caption.style.transform = `translateY(${progress * -6}px)`;
+        ticking = false;
+      };
+      window.addEventListener('scroll', () => {
+        if (!ticking) { requestAnimationFrame(update); ticking = true; }
+      }, {passive:true});
+      update();
+    }
+  }
+})();
+</script>
+
+
+<script>
+(() => {
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Scroll storytelling: swap scenes as the user progresses through the section.
+  const stage = document.querySelector('.scroll-stage');
+  if (stage && !reduced) {
+    const steps = [...stage.querySelectorAll('.story-step')];
+    const scenes = [...stage.querySelectorAll('.scene-img')];
+    const progress = document.getElementById('storyProgress');
+    const title = document.getElementById('sceneTitle');
+    const sub = document.getElementById('sceneSub');
+    const data = [
+      ['EQUIPO','Hardware seleccionado para tu operación.'],
+      ['INSTALACIÓN','Conectamos el equipo y sus periféricos.'],
+      ['OPERACIÓN','Lo dejamos listo para trabajar.']
+    ];
+
+    const updateStory = () => {
+      const r = stage.getBoundingClientRect();
+      const total = Math.max(1, stage.offsetHeight - window.innerHeight);
+      const p = Math.max(0, Math.min(1, -r.top / total));
+      const idx = Math.min(2, Math.floor(p * 3));
+
+      steps.forEach((s,i)=>s.classList.toggle('active',i===idx));
+      scenes.forEach((s,i)=>s.classList.toggle('active',i===idx));
+      if (progress) progress.style.width = `${Math.max(8,p*100)}%`;
+      if (title) title.textContent = data[idx][0];
+      if (sub) sub.textContent = data[idx][1];
+    };
+    window.addEventListener('scroll', updateStory, {passive:true});
+    updateStory();
+  }
+
+  // Horizontal scroll section: vertical scrolling drives a horizontal product story.
+  const wrap = document.querySelector('.horizontal-wrap');
+  const track = document.querySelector('.horizontal-track');
+  if (wrap && track && !reduced && window.innerWidth > 900) {
+    const updateHorizontal = () => {
+      const r = wrap.getBoundingClientRect();
+      const travel = Math.max(0, track.scrollWidth - window.innerWidth + 70);
+      const range = Math.max(1, wrap.offsetHeight - window.innerHeight);
+      const p = Math.max(0, Math.min(1, -r.top / range));
+      track.style.transform = `translate3d(${-travel*p}px,0,0)`;
+    };
+    window.addEventListener('scroll', updateHorizontal, {passive:true});
+    window.addEventListener('resize', updateHorizontal);
+    updateHorizontal();
+  }
+
+  // Subtle pointer-reactive motion on cards.
+  if (!reduced && window.matchMedia('(pointer:fine)').matches) {
+    document.querySelectorAll('.card,.hardware-card,.service').forEach(card=>{
+      card.addEventListener('pointermove', e=>{
+        const r=card.getBoundingClientRect();
+        const x=(e.clientX-r.left)/r.width-.5;
+        const y=(e.clientY-r.top)/r.height-.5;
+        card.style.transform=`translateY(-7px) perspective(700px) rotateX(${y*-2}deg) rotateY(${x*2}deg)`;
+      });
+      card.addEventListener('pointerleave',()=>card.style.transform='');
+    });
+  }
+})();
+</script>
+
+
+<script>
+(() => {
+  if (window.matchMedia('(pointer:coarse)').matches) {
+    document.querySelectorAll('.card,.hardware-card,.service').forEach(card => {
+      card.style.transform = '';
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
