@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>TENDO — Tecnología para negocios</title>
 <meta name="description" content="TENDO: tecnología, punto de venta, computación, instalación y soporte para negocios.">
+<link rel="icon" type="image/png" href="favicon.png">
 <style>
 :root{
  --black:#0d1010;--ink:#151918;--green:#00b894;--gray:#65706d;--line:#e7eae8;
@@ -14,9 +15,7 @@
 body{margin:0;background:#fff;color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 a{color:inherit;text-decoration:none}.container{width:min(calc(100% - 48px),var(--max));margin:auto}
 header{height:76px;background:rgba(255,255,255,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
-.nav{height:100%;display:flex;align-items:center;gap:42px}.logo{font-size:28px;font-weight:950;letter-spacing:-2px;display:flex;align-items:center}
-.o{width:25px;height:25px;border:7px solid var(--ink);border-radius:50%;position:relative;margin-left:1px}.o:after{content:"";position:absolute;width:7px;height:7px;background:var(--green);border-radius:50%;left:2px;top:2px}
-nav{display:flex;gap:28px;flex:1;font-size:14px;font-weight:650;color:#4f5655}nav a:hover{color:var(--ink)}
+.nav{height:100%;display:flex;align-items:center;gap:42px}nav{display:flex;gap:28px;flex:1;font-size:14px;font-weight:650;color:#4f5655}nav a:hover{color:var(--ink)}
 .top-cta{background:var(--black);color:#fff;padding:12px 19px;border-radius:3px;font-size:12px;font-weight:850}
 
 .hero{padding:28px 0 0}.hero-grid{display:grid;grid-template-columns:.82fr 1.18fr;min-height:590px;border-radius:7px;overflow:hidden;background:var(--black);box-shadow:0 22px 55px rgba(13,16,16,.12)}
@@ -55,17 +54,17 @@ h2{font-size:clamp(39px,5vw,65px);line-height:.92;letter-spacing:-.065em;margin:
 .service-num{font-size:10px;font-weight:900;color:var(--green);letter-spacing:.13em}.service h3{font-size:24px;letter-spacing:-.04em;margin:45px 0 8px}.service p{font-size:14px;color:var(--gray);line-height:1.45;margin:0}
 
 .black-section{background:#111414;color:#fff;padding:90px 0}.black-grid{display:grid;grid-template-columns:1fr .65fr;gap:80px;align-items:end}.black-section h2{max-width:780px}.black-section p{color:#aeb4b1;line-height:1.55;max-width:450px;margin:0}.black-section .btn{background:#fff;color:var(--ink);border-color:#fff;margin-top:22px}
-footer{padding:27px 0;color:#727876;font-size:12px}.footer-row{display:flex;justify-content:space-between}
+footer{padding:27px 0;color:#727876;font-size:12px}.footer-brand{display:flex;align-items:center;gap:10px}.footer-brand img{width:74px;height:auto;display:block}.footer-row{display:flex;justify-content:space-between}
 
 @media(max-width:900px){
  nav{display:none}.hero-grid{grid-template-columns:1fr}.hero-photo{min-height:430px}.categories{grid-template-columns:1fr 1fr}.visual-grid{grid-template-columns:1fr}.hardware{grid-template-columns:1fr 1fr}.service-grid{grid-template-columns:1fr 1fr}.trust{grid-template-columns:1fr 1fr}.black-grid{grid-template-columns:1fr;gap:30px}
 }
 @media(max-width:560px){
- .container{width:calc(100% - 30px)}.top-cta{display:none}.hero{padding-top:15px}.hero-copy{padding:42px 25px}.hero-photo{min-height:340px}.categories,.hardware,.service-grid,.trust{grid-template-columns:1fr}.trust div+div{border-left:0;border-top:1px solid var(--line);padding-left:0}.section{padding:65px 0}.section-head{display:block}.section-head p{margin-top:20px}.side-stack{grid-template-rows:220px 220px}.footer-row{display:block}.footer-row div+div{margin-top:8px}
+ .container{width:calc(100% - 30px)}.top-cta{display:none}.hero{padding-top:15px}.hero-copy{padding:42px 25px}.hero-photo{min-height:340px}.categories,.hardware,.service-grid,.trust{grid-template-columns:1fr}.trust div+div{border-left:0;border-top:1px solid var(--line);padding-left:0}.section{padding:65px 0}.section-head{display:block}.section-head p{margin-top:20px}.side-stack{grid-template-rows:220px 220px}.footer-row{display:block}.footer-row div+div{margin-top:8px}.footer-brand{margin-bottom:8px}
 }
 
 /* TENDO motion layer */
-.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s var(--stagger,0ms) cubic-bezier(.2,.7,.2,1),transform .7s var(--stagger,0ms) cubic-bezier(.2,.7,.2,1)}
 .reveal.in-view{opacity:1;transform:none}
 .reveal-delay-1{transition-delay:.08s}.reveal-delay-2{transition-delay:.16s}.reveal-delay-3{transition-delay:.24s}
 .hero-photo img,.photo-card img,.side-card img{transform:scale(1.04);transition:transform 1.2s cubic-bezier(.2,.7,.2,1)}
@@ -142,8 +141,7 @@ footer{padding:27px 0;color:#727876;font-size:12px}.footer-row{display:flex;just
   .container{width:min(calc(100% - 32px),var(--max))}
   header{height:68px}
   .nav{gap:0;justify-content:space-between}
-  .logo{font-size:25px}.o{width:23px;height:23px;border-width:6px}.o:after{width:6px;height:6px}
-  .top-cta{display:block;padding:10px 14px;font-size:10px}
+    .top-cta{display:block;padding:10px 14px;font-size:10px}
   .hero{padding-top:14px}
   .hero-grid{min-height:0;display:flex;flex-direction:column;border-radius:6px}
   .hero-copy{padding:36px 24px 30px;order:1}
@@ -242,11 +240,99 @@ footer{padding:27px 0;color:#727876;font-size:12px}.footer-row{display:flex;just
   .hardware-img{height:190px}
 }
 
+
+.brand-logo{display:flex;align-items:center;width:156px;height:42px}
+.brand-logo img{display:block;width:100%;height:100%;object-fit:contain;object-position:left center}
+@media(max-width:900px){
+ .brand-logo{width:132px;height:36px}
+}
+
+
+/* TENDO v9 — digital motion layer */
+.service-orbit{
+  width:48px;height:48px;border:7px solid var(--black);border-radius:50%;
+  position:relative;display:block;overflow:visible
+}
+.service-orbit .core{
+  width:11px;height:11px;background:var(--green);border-radius:50%;
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  box-shadow:0 0 0 0 rgba(0,184,148,.28);
+  transition:transform .65s cubic-bezier(.2,.8,.2,1),box-shadow .65s ease
+}
+.service-orbit .satellite{
+  width:7px;height:7px;background:var(--green);border-radius:50%;
+  position:absolute;left:50%;top:50%;
+  transform:translate(-50%,-50%) rotate(0deg) translateX(24px);
+  transform-origin:center;
+  opacity:.2
+}
+.card:hover .service-orbit .core{
+  transform:translate(-50%,-50%) scale(1.28);
+  box-shadow:0 0 0 10px rgba(0,184,148,.10)
+}
+.card:hover .service-orbit .satellite{
+  opacity:1;animation:orbit .9s cubic-bezier(.3,.8,.3,1) forwards
+}
+@keyframes orbit{
+  0%{transform:translate(-50%,-50%) rotate(0deg) translateX(24px)}
+  100%{transform:translate(-50%,-50%) rotate(360deg) translateX(24px)}
+}
+
+.digital-grid{
+  position:absolute;inset:0;pointer-events:none;opacity:.11;
+  background-image:linear-gradient(rgba(0,184,148,.25) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(0,184,148,.25) 1px,transparent 1px);
+  background-size:42px 42px;
+  mask-image:radial-gradient(circle at 70% 45%,black,transparent 68%)
+}
+.scan-line{
+  position:absolute;left:0;right:0;top:-10%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--green),transparent);
+  opacity:.35;pointer-events:none;z-index:3;
+  animation:scan 5s linear infinite
+}
+@keyframes scan{0%{top:-5%;opacity:0}15%{opacity:.35}85%{opacity:.35}100%{top:105%;opacity:0}}
+
+.card{
+  position:relative;overflow:hidden
+}
+.card:before{
+  content:"";position:absolute;width:180px;height:180px;border-radius:50%;
+  right:-110px;bottom:-110px;background:radial-gradient(circle,rgba(0,184,148,.10),transparent 68%);
+  transition:transform .6s ease
+}
+.card:hover:before{transform:scale(2.2)}
+.card .arrow{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:34px;height:34px;border-radius:50%;background:#f3f5f4;
+  transition:transform .35s ease,background .35s ease,color .35s ease
+}
+.card:hover .arrow{transform:translate(4px,-4px);background:var(--green);color:#fff}
+
+.tech-chip{
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:9px;font-weight:900;letter-spacing:.1em;
+  color:#58605d;border:1px solid #dfe4e1;border-radius:999px;
+  padding:7px 10px;background:#fff
+}
+.tech-chip i{width:6px;height:6px;border-radius:50%;background:var(--green);display:block;animation:blink 1.8s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:.35}50%{opacity:1;box-shadow:0 0 0 5px rgba(0,184,148,.08)}}
+
+@media(max-width:900px){
+ .service-orbit{width:38px;height:38px;border-width:6px}
+ .service-orbit .core{width:9px;height:9px}
+ .service-orbit .satellite{width:6px;height:6px}
+ .digital-grid{background-size:32px 32px}
+}
+@media(prefers-reduced-motion:reduce){
+ .service-orbit .satellite,.scan-line,.tech-chip i{animation:none!important}
+}
+
 </style>
 </head>
 <body>
 <header><div class="container nav">
-<a class="logo" href="#">TEND<span class="o"></span></a>
+<a class="brand-logo" href="#" aria-label="TENDO"><img src="logo-transparent.png" alt="TENDO"></a>
 <nav><a href="#soluciones">Soluciones</a><a href="#equipamiento">Equipamiento</a><a href="#instalacion">Instalación</a><a href="#tendo">TENDO</a></nav>
 <a class="top-cta" href="#cotizar">COTIZAR</a>
 </div></header>
@@ -258,11 +344,11 @@ footer{padding:27px 0;color:#727876;font-size:12px}.footer-row{display:flex;just
 <h1>EQUIPA TU NEGOCIO.<br><em>HAZLO FUNCIONAR.</em></h1>
 <p>Punto de venta, computación, instalación y soporte. Tecnología práctica, configurada y lista para trabajar.</p>
 <div class="buttons"><a class="btn primary" href="#equipamiento">VER EQUIPAMIENTO</a><a class="btn" href="#cotizar">COTIZAR</a></div>
-<div class="product-pills"><span>TERMINALES</span><span>IMPRESORAS</span><span>LECTORES</span><span>CAJONES</span><span>COMPUTADORAS</span></div>
+<div class="product-pills"><span>TERMINALES</span><span>IMPRESORAS</span><span>LECTORES</span><span>CAJONES</span><span>COMPUTADORAS</span></div><div style="margin-top:14px"><span class="tech-chip"><i></i> TECNOLOGÍA LISTA PARA OPERAR</span></div>
 </div>
-<div class="hero-photo">
+<div class="hero-photo"><div class="digital-grid"></div><div class="scan-line"></div>
 <img class="parallax-media" src="https://www.srkinnovations.com/cdn/shop/files/3_4f948e7d-0138-4324-8fc7-e7b15d48a59f.jpg?v=1779447883&width=1445" alt="Estación moderna de punto de venta con terminal, impresora y lector">
-<div class="tech-grid"></div><div class="signal"></div><div class="photo-tag">TENDO / PUNTO DE VENTA</div>
+<div class="tech-grid"></div><div class="signal"></div><div class="photo-tag">TENDO / PUNTO DE VENTA</div><div class="tech-chip" style="position:absolute;z-index:4;right:25px;top:22px"><i></i> EQUIPO LISTO</div>
 <div class="photo-caption"><strong>HARDWARE QUE SE VE.</strong><span>Una estación completa de operación, no una pantalla aislada.</span></div>
 </div>
 </div>
@@ -273,10 +359,10 @@ footer{padding:27px 0;color:#727876;font-size:12px}.footer-row{display:flex;just
 <section class="section reveal" id="soluciones"><div class="container">
 <div class="section-head"><h2>SOLUCIONES PARA<br>LA OPERACIÓN.</h2><p>Equipamiento y servicios pensados alrededor de cómo funciona realmente un negocio.</p></div>
 <div class="categories">
-<article class="card reveal"><div><div class="card-num">01 / POS</div><div class="icon"></div></div><div><h3>Punto de venta</h3><p>Terminales, impresoras, lectores, cajones y periféricos.</p><div class="arrow">↗</div></div></article>
-<article class="card reveal"><div><div class="card-num">02 / PC</div><div class="icon"></div></div><div><h3>Computación</h3><p>Equipos, accesorios, mantenimiento y configuración.</p><div class="arrow">↗</div></div></article>
-<article class="card reveal"><div><div class="card-num">03 / INFRA</div><div class="icon"></div></div><div><h3>Infraestructura</h3><p>Conectividad, periféricos e instalación tecnológica.</p><div class="arrow">↗</div></div></article>
-<article class="card reveal"><div><div class="card-num">04 / SERVICE</div><div class="icon"></div></div><div><h3>Soporte</h3><p>Mantenimiento, ajustes y atención cuando lo necesitas.</p><div class="arrow">↗</div></div></article>
+<article class="card reveal" style="--stagger:270ms" style="--stagger:180ms" style="--stagger:90ms" style="--stagger:0ms"><div><div class="card-num">01 / POS</div><div class="service-orbit"><span class="core"></span><span class="satellite"></span></div></div><div><h3>Punto de venta</h3><p>Terminales, impresoras, lectores, cajones y periféricos.</p><div class="arrow">↗</div></div></article>
+<article class="card reveal"><div><div class="card-num">02 / PC</div><div class="service-orbit"><span class="core"></span><span class="satellite"></span></div></div><div><h3>Computación</h3><p>Equipos, accesorios, mantenimiento y configuración.</p><div class="arrow">↗</div></div></article>
+<article class="card reveal"><div><div class="card-num">03 / INFRA</div><div class="service-orbit"><span class="core"></span><span class="satellite"></span></div></div><div><h3>Infraestructura</h3><p>Conectividad, periféricos e instalación tecnológica.</p><div class="arrow">↗</div></div></article>
+<article class="card reveal"><div><div class="card-num">04 / SERVICE</div><div class="service-orbit"><span class="core"></span><span class="satellite"></span></div></div><div><h3>Soporte</h3><p>Mantenimiento, ajustes y atención cuando lo necesitas.</p><div class="arrow">↗</div></div></article>
 </div>
 </div></section>
 
@@ -318,7 +404,7 @@ footer{padding:27px 0;color:#727876;font-size:12px}.footer-row{display:flex;just
 <p>Cuéntanos qué quieres equipar, qué equipo ya tienes o qué problema necesitas resolver. Podemos ayudarte con punto de venta, computación, instalación, configuración y soporte.</p>
 </div></section>
 </main>
-<footer><div class="container footer-row"><div><strong>TENDO</strong> — Tecnología para negocios</div><div>© 2026 TENDO · México</div></div></footer>
+<footer><div class="container footer-row"><div class="footer-brand"><img src="logo-transparent.png" alt="TENDO"> <span>— Tecnología para negocios</span></div><div>© 2026 TENDO · México</div></div></footer>
 
 <script>
 (() => {
